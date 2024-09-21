@@ -46,7 +46,7 @@ Once you've finished gathering **all** the above information about the user, you
 You are now being connected with a user.
 `;
 
-const JESS_INITIAL_GREETING = `Hi! I’m Jess, an AI assistant designed to help beginners learn to code. I'm here to help you get started on your coding journey. Before we dive in, I'd love to get to know you a bit better. What's your name?`;
+const JESS_INITIAL_GREETING: string = `Hi! I’m Jess, an AI assistant designed to help beginners learn to code. I'm here to help you get started on your coding journey. Before we dive in, I'd love to get to know you a bit better. What's your name?`;
 
 function onboardingPrompts(prompt: ChatItem[]): [AnthropicMessageParam[], string | null] {
     let transformedPrompt: AnthropicMessageParam[] = prompt.map(chatItemToAnthropicMessage);

@@ -89,7 +89,10 @@ const OnboardingPage = () => {
                 chatMessageInputBoxResources={chatMessageInputBoxResources}
                 chatMessageInputBoxSizeParams={chatMessageInputBoxSizeParams}
                 defaultChatHistory={[
-                    { sender: ChatUser.JESS, message: JESS_INITIAL_GREETING }
+                    {
+                        sender: ChatUser.JESS,
+                        message: JESS_INITIAL_GREETING
+                    }
                 ]}
             />
         </div>
