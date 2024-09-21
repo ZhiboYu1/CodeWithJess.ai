@@ -1,5 +1,6 @@
 import {ChatItem, chatItemToAnthropicMessage} from "../../types/ChatItem";
 import {AnthropicMessageParam} from "../../types/AnthropicMessageParam";
+import Anthropic from "@anthropic-ai/sdk";
 
 const ONBOARDING_SYSTEM_PROMPT = `
 <jess_info>
@@ -48,7 +49,7 @@ You are now being connected with a user.
 
 const JESS_INITIAL_GREETING: string = `Hi! I’m Jess, an AI assistant designed to help beginners learn to code. I'm here to help you get started on your coding journey. Before we dive in, I'd love to get to know you a bit better. What's your name?`;
 
-function onboardingPrompts(prompt: ChatItem[]): [AnthropicMessageParam[], string | null] {
+function transformOnboardingPrompt(prompt: ChatItem[]): [AnthropicMessageParam[], string | null] {
     let transformedPrompt: AnthropicMessageParam[] = prompt.map(chatItemToAnthropicMessage);
     // add the placeholder user prompt in front
     transformedPrompt.unshift({role: 'user', content: '<system>Please ignore this initial message. Your conversation with the user begins now.</system>'});
@@ -56,4 +57,46 @@ function onboardingPrompts(prompt: ChatItem[]): [AnthropicMessageParam[], string
     return [transformedPrompt, ONBOARDING_SYSTEM_PROMPT];
 }
 
-export {onboardingPrompts, JESS_INITIAL_GREETING};
+
+function getOnboardingAssistantTools(): Anthropic.Messages.Tool[] {
+    return [
+        {
+            input_schema: {
+                'type': 'object',
+                'properties': {
+                    'name': {
+                        'type': 'string',
+                        'description': 'The user\'s name'
+                    },
+                    'goals': {
+                        'type': 'string',
+                        'description': 'What goals the user wants to achieve with programming and/or codewithjess.ai'
+                    },
+                    'programming_language': {
+                        'type': 'string',
+                        'description': 'The programming language the user wants to learn'
+                    },
+                    'constructs_to_learn_or_avoid': {
+                        'type': 'string',
+                        'description': 'Specific constructs the user wants to practice and/or avoid'
+                    },
+                    'prior_knowledge': {
+                        'type': 'string',
+                        'description': 'What the user already knows about programming'
+                    },
+                    'additional_notes': {
+                        'type': 'string',
+                        'description': 'Any additional notes to provide to your future self for lesson generation. Remember, you will not have access to this conversation when generating lessons. Therefore, use this field to note down any additional information you may require to generate a lesson plan and practice problems.'
+                    }
+                },
+                'required': ['name', 'goals', 'programming_language', 'constructs_to_learn_or_avoid', 'prior_knowledge'],
+            },
+            name: 'finish_onboarding',
+            description: 'Call this tool when you have finished gathering all the information you think you need to generate a lesson plan and practice problems for the user. This will end the current conversation and start the lesson generation process.',
+        }
+    ]
+}
+
+
+
+export {transformOnboardingPrompt, JESS_INITIAL_GREETING, getOnboardingAssistantTools};

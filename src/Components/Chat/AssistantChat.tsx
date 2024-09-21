@@ -2,7 +2,7 @@ import "./AssistantChat.css"
 import React, {useCallback, useState, useEffect} from 'react';
 import Anthropic from '@anthropic-ai/sdk';
 import {ChatMessageList, ChatMessageListSizeParams} from './ChatMessageList';
-import {ChatItem, chatItemToAnthropicMessage, ChatUser} from "../../types/ChatItem";
+import {ChatItem, ChatUser} from "../../types/ChatItem";
 import {ChatMessageItemResources, ChatMessageItemSizeParams} from './ChatMessageItem';
 import { ChatMessageInputBox, ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams } from './ChatMessageInputBox';
 import { ANTHROPIC_API_KEY } from "../../secrets";
@@ -16,6 +16,7 @@ const anthropic = new Anthropic({
 
 interface AssistantChatProps {
     transformPrompt: (chatHistory: ChatItem[]) => [AnthropicMessageParam[], string | null];
+    assistantTools: Anthropic.Messages.Tool[];
     chatMessageItemResources: ChatMessageItemResources;
     chatMessageItemSizeParams: ChatMessageItemSizeParams;
     chatMessageListSizeParams: ChatMessageListSizeParams;
@@ -27,6 +28,7 @@ interface AssistantChatProps {
 
 const AssistantChat: React.FC<AssistantChatProps> = ({
     transformPrompt,
+    assistantTools,
     chatMessageItemResources,
     chatMessageItemSizeParams,
     chatMessageListSizeParams,
@@ -58,6 +60,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
         let finalMessage = await anthropic.messages.stream({
             messages: processedPrompt,
             model: 'claude-3-5-sonnet-20240620',
+            tools: assistantTools,
             system: (systemPrompt === null ? undefined : systemPrompt),
             max_tokens: 4096,
         }).on('text', (text) => {
@@ -69,7 +72,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
         onNewMessage?.(assistantMessage); // Call the callback with the assistant's message
 
         setOngoingAssistantResponse(null);
-    }, [transformPrompt, chatHistory, onNewMessage]);
+    }, [chatHistory, onNewMessage, transformPrompt, assistantTools]);
 
     return (
         <div

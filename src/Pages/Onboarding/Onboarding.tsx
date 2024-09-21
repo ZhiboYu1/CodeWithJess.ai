@@ -4,7 +4,11 @@ import {ChatMessageListSizeParams} from "../../Components/Chat/ChatMessageList";
 import {ChatMessageItemResources, ChatMessageItemSizeParams} from '../../Components/Chat/ChatMessageItem';
 import {ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams} from '../../Components/Chat/ChatMessageInputBox';
 import AssistantChat from '../../Components/Chat/AssistantChat';
-import {JESS_INITIAL_GREETING, onboardingPrompts} from "./OnboardingPrompts";
+import {
+    getOnboardingAssistantTools,
+    JESS_INITIAL_GREETING,
+    transformOnboardingPrompt
+} from "./OnboardingAssistantPrompts";
 import {ChatUser} from "../../types/ChatItem";
 
 const OnboardingPage = () => {
@@ -82,7 +86,8 @@ const OnboardingPage = () => {
                 <img src="/onboarding/title_text.png" alt="Get Started with Jess" width={1098} height={54} />
             </div>
             <AssistantChat
-                transformPrompt={onboardingPrompts}
+                transformPrompt={transformOnboardingPrompt}
+                assistantTools={getOnboardingAssistantTools()}
                 chatMessageItemResources={chatMessageItemResources}
                 chatMessageItemSizeParams={chatMessageItemSizeParams}
                 chatMessageListSizeParams={chatMessageListSizeParams}
