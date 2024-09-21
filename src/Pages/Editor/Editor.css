@@ -1,0 +1,87 @@
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    width: 100%;
+    height: 100%;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Master container wraps all sections */
+.master-container {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+/* Main container (Editor + Problem/Output) */
+.main-container {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    height: 100%;
+    background-color: #1e1e1e;
+}
+
+/* Editor container */
+.editor-container {
+    flex: 3; /* Editor takes more space */
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    background-color: #252526;
+}
+
+.editor-container button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #007acc;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 5px;
+}
+
+.editor-container button:hover {
+    background-color: #005f9e;
+}
+
+/* Problem/Output container wraps both problem and output */
+.problem-and-output-container {
+    flex: 2; /* Take up a smaller portion compared to editor */
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    background-color: #333333;
+}
+
+/* Problem container */
+.problem-container {
+    flex: 1;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #1e1e1e;
+    color: white;
+    border-radius: 8px;
+}
+
+/* Output container */
+.output-container {
+    flex: 1;
+    padding: 10px;
+    background-color: #1e1e1e;
+    color: white;
+    border-radius: 8px;
+}
+
+/* Progress container (optional) */
+.progress-container {
+    width: 20%;
+    background-color: #1a1a1a;
+    padding: 16px;
+}

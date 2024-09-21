@@ -1,6 +1,5 @@
-import {ChatItem, chatItemToAnthropicMessage} from "../../types/ChatItem";
-import {AnthropicMessageParam} from "../../types/AnthropicMessageParam";
 import Anthropic from "@anthropic-ai/sdk";
+import {AnthropicMessageObject, AnthropicObject} from "../../types/AnthropicObjects";
 
 const ONBOARDING_SYSTEM_PROMPT = `
 <jess_info>
@@ -47,15 +46,8 @@ Once you've finished gathering **all** the above information about the user, you
 You are now being connected with a user.
 `;
 
+const USER_INITIAL_GREETING: string = `<system>Please ignore this initial message. Your conversation with the user begins now.</system>`;
 const JESS_INITIAL_GREETING: string = `Hi! I’m Jess, an AI assistant designed to help beginners learn to code. I'm here to help you get started on your coding journey. Before we dive in, I'd love to get to know you a bit better. What's your name?`;
-
-function transformOnboardingPrompt(prompt: ChatItem[]): [AnthropicMessageParam[], string | null] {
-    let transformedPrompt: AnthropicMessageParam[] = prompt.map(chatItemToAnthropicMessage);
-    // add the placeholder user prompt in front
-    transformedPrompt.unshift({role: 'user', content: '<system>Please ignore this initial message. Your conversation with the user begins now.</system>'});
-
-    return [transformedPrompt, ONBOARDING_SYSTEM_PROMPT];
-}
 
 
 function getOnboardingAssistantTools(): Anthropic.Messages.Tool[] {
@@ -92,11 +84,27 @@ function getOnboardingAssistantTools(): Anthropic.Messages.Tool[] {
                 'required': ['name', 'goals', 'programming_language', 'constructs_to_learn_or_avoid', 'prior_knowledge'],
             },
             name: 'finish_onboarding',
-            description: 'Call this tool when you have finished gathering all the information you think you need to generate a lesson plan and practice problems for the user. This will end the current conversation and start the lesson generation process.',
+            description: 'Call this tool when you have finished gathering all the information you think you need to generate a lesson plan and practice problems for the user. Remember that this will **immediately** end the current conversation and start the lesson generation process. Do **not** expect to say anything else to the user after calling this tool.',
         }
     ]
 }
 
+const ONBOARDING_INITIAL_MESSAGES: AnthropicObject[] = [
+    {
+        type: 'message',
+        rawObject: null,
+        shouldDisplay: false,
+        role: 'user',
+        content: USER_INITIAL_GREETING
+    },
+    {
+        type: 'message',
+        rawObject: null,
+        shouldDisplay: true,
+        role: 'assistant',
+        content: JESS_INITIAL_GREETING
+    }
+]
 
 
-export {transformOnboardingPrompt, JESS_INITIAL_GREETING, getOnboardingAssistantTools};
+export {ONBOARDING_SYSTEM_PROMPT, ONBOARDING_INITIAL_MESSAGES, getOnboardingAssistantTools};

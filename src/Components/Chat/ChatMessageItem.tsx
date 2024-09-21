@@ -1,6 +1,6 @@
 import React from 'react';
 import './ChatMessageItem.css';
-import { ChatItem, ChatUser } from "../../types/ChatItem";
+import { DisplayChatItem, ChatItemRole } from "../../types/DisplayChatItem";
 
 interface ChatMessageItemResources {
     userIcon: string;
@@ -27,7 +27,7 @@ interface ChatMessageItemSizeParams {
 }
 
 interface ChatMessageItemProps {
-    chatItem: ChatItem;
+    chatItem: DisplayChatItem;
     resources: ChatMessageItemResources;
     sizeParams: ChatMessageItemSizeParams;
 }
@@ -61,7 +61,7 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = ({
         messageTextParagraphSpacing,
     } = sizeParams;
 
-    const isUserMessage = chatItem.sender === ChatUser.USER;
+    const isUserMessage = chatItem.role === ChatItemRole.USER;
     const icon = isUserMessage ? userIcon : jessIcon;
     const senderTextImage = isUserMessage ? userTextImage : jessTextImage;
     const senderTextImageHeight = isUserMessage ? userTextImageHeight : jessTextImageHeight;

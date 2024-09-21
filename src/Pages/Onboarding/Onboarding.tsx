@@ -6,10 +6,10 @@ import {ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams} from '../..
 import AssistantChat from '../../Components/Chat/AssistantChat';
 import {
     getOnboardingAssistantTools,
-    JESS_INITIAL_GREETING,
-    transformOnboardingPrompt
+    ONBOARDING_INITIAL_MESSAGES, ONBOARDING_SYSTEM_PROMPT,
 } from "./OnboardingAssistantPrompts";
-import {ChatUser} from "../../types/ChatItem";
+import {ChatItemRole} from "../../types/DisplayChatItem";
+import {AnthropicObject} from "../../types/AnthropicObjects";
 
 const OnboardingPage = () => {
     const chatMessageItemResources: ChatMessageItemResources = {
@@ -86,19 +86,18 @@ const OnboardingPage = () => {
                 <img src="/onboarding/title_text.png" alt="Get Started with Jess" width={1098} height={54} />
             </div>
             <AssistantChat
-                transformPrompt={transformOnboardingPrompt}
+                transformPrompt={(chatHistory: AnthropicObject[]) => {return chatHistory}}
+                systemPrompt={ONBOARDING_SYSTEM_PROMPT}
                 assistantTools={getOnboardingAssistantTools()}
                 chatMessageItemResources={chatMessageItemResources}
                 chatMessageItemSizeParams={chatMessageItemSizeParams}
                 chatMessageListSizeParams={chatMessageListSizeParams}
                 chatMessageInputBoxResources={chatMessageInputBoxResources}
                 chatMessageInputBoxSizeParams={chatMessageInputBoxSizeParams}
-                defaultChatHistory={[
-                    {
-                        sender: ChatUser.JESS,
-                        message: JESS_INITIAL_GREETING
-                    }
-                ]}
+                defaultChatHistory={ONBOARDING_INITIAL_MESSAGES}
+                handleToolUse={(tool_name, tool_input) => {
+                    return null;
+                }}
             />
         </div>
     );

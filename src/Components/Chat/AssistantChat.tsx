@@ -2,12 +2,18 @@ import "./AssistantChat.css"
 import React, {useCallback, useState, useEffect} from 'react';
 import Anthropic from '@anthropic-ai/sdk';
 import {ChatMessageList, ChatMessageListSizeParams} from './ChatMessageList';
-import {ChatItem, ChatUser} from "../../types/ChatItem";
+import {DisplayChatItem, ChatItemRole} from "../../types/DisplayChatItem";
 import {ChatMessageItemResources, ChatMessageItemSizeParams} from './ChatMessageItem';
 import { ChatMessageInputBox, ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams } from './ChatMessageInputBox';
 import { ANTHROPIC_API_KEY } from "../../secrets";
 import TextBlock = Anthropic.TextBlock;
-import {AnthropicMessageParam} from "../../types/AnthropicMessageParam";
+import {
+    AnthropicMessageObject,
+    AnthropicObject,
+    createAnthropicMessageObjectUser,
+    createMockAnthropicMessageObjectAssistant,
+    sanitizeAnthropicObjectForTransfer
+} from "../../types/AnthropicObjects";
 
 const anthropic = new Anthropic({
     apiKey: ANTHROPIC_API_KEY,
@@ -15,7 +21,8 @@ const anthropic = new Anthropic({
 });
 
 interface AssistantChatProps {
-    transformPrompt: (chatHistory: ChatItem[]) => [AnthropicMessageParam[], string | null];
+    transformPrompt: (chatHistory: AnthropicObject[]) => AnthropicObject[];
+    systemPrompt: string | null,
     assistantTools: Anthropic.Messages.Tool[];
     handleToolUse: (tool_name: string, tool_input: any) => string | null;
     chatMessageItemResources: ChatMessageItemResources;
@@ -23,12 +30,13 @@ interface AssistantChatProps {
     chatMessageListSizeParams: ChatMessageListSizeParams;
     chatMessageInputBoxResources: ChatMessageInputBoxResources;
     chatMessageInputBoxSizeParams: ChatMessageInputBoxSizeParams;
-    defaultChatHistory?: ChatItem[]; // New prop for default chat history
-    onNewMessage?: (message: ChatItem) => void; // New callback prop
+    defaultChatHistory?: AnthropicObject[];
+    onNewMessage?: (messages: AnthropicObject[]) => void;
 }
 
 const AssistantChat: React.FC<AssistantChatProps> = ({
     transformPrompt,
+    systemPrompt,
     assistantTools,
     handleToolUse,
     chatMessageItemResources,
@@ -39,28 +47,22 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
     defaultChatHistory = [], // Default value is an empty array
     onNewMessage
 }) => {
-    const [chatHistory, setChatHistory] = useState<ChatItem[]>(defaultChatHistory);
+    const [chatHistory, setChatHistory] = useState<AnthropicObject[]>(defaultChatHistory);
     const [ongoingAssistantResponse, setOngoingAssistantResponse] = useState<string | null>(null);
 
-    useEffect(() => {
-        // Call onNewMessage for each message in the default chat history
-        defaultChatHistory.forEach(message => {
-            onNewMessage?.(message);
-        });
-    }, [defaultChatHistory, onNewMessage]); // Empty dependency array ensures this runs only once on mount
-
     const handleSubmit = useCallback(async (userInput: string) => {
-        const userMessage: ChatItem = { sender: ChatUser.USER, message: userInput };
+        const userMessage: AnthropicObject = createAnthropicMessageObjectUser(userInput);
         const newChatHistory = [...chatHistory, userMessage];
         setChatHistory(newChatHistory);
-        onNewMessage?.(userMessage);
+        onNewMessage?.([userMessage]);
 
-        const [processedPrompt, systemPrompt] = transformPrompt(newChatHistory);
+        const processedPrompt = transformPrompt(newChatHistory);
+        const sanitizedPrompt = processedPrompt.map(sanitizeAnthropicObjectForTransfer);
 
         setOngoingAssistantResponse('');
 
         let finalMessage = await anthropic.messages.stream({
-            messages: processedPrompt,
+            messages: sanitizedPrompt,
             model: 'claude-3-5-sonnet-20240620',
             tools: assistantTools,
             system: (systemPrompt === null ? undefined : systemPrompt),
@@ -73,18 +75,27 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
 
         for (const contentBlock of finalMessage.content) {
             if (contentBlock.type === 'text') {
-                const assistantMessage: ChatItem = { sender: ChatUser.JESS, message: (finalMessage.content[0] as TextBlock).text };
+                const assistantMessage: AnthropicMessageObject = {
+                    type: 'message',
+                    rawObject: contentBlock,
+                    shouldDisplay: true,
+                    role: 'assistant',
+                    content: (finalMessage.content[0] as TextBlock).text
+                };
                 setChatHistory(prev => [...prev, assistantMessage]);
-                onNewMessage?.(assistantMessage);
+                onNewMessage?.([assistantMessage]);
             } else if (contentBlock.type === 'tool_use') {
                 const toolUse = contentBlock as Anthropic.ToolUseBlock;
+                console.log(toolUse);
                 let result = handleToolUse(toolUse.name, toolUse.input);
                 if (result !== null) {
                     // TODO: Handle tool results
                 }
             }
         }
-    }, [chatHistory, onNewMessage, transformPrompt, assistantTools]);
+    }, [chatHistory, onNewMessage, assistantTools, handleToolUse]);
+
+    let objectsT = {ongoingAssistantResponse !== null ? [...chatHistory, createMockAnthropicMessageObjectAssistant(ongoingAssistantResponse)] : chatHistory};
 
     return (
         <div
@@ -106,7 +117,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
                 className={'invisible-scrollbar'}
             >
                 <ChatMessageList
-                    chatItems={ongoingAssistantResponse !== null ? [...chatHistory, { sender: ChatUser.JESS, message: ongoingAssistantResponse }] : chatHistory}
+                    chatItems=
                     chatMessageItemResources={chatMessageItemResources}
                     chatMessageItemSizeParams={chatMessageItemSizeParams}
                     chatMessageListSizeParams={chatMessageListSizeParams}
