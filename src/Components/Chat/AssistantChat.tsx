@@ -1,54 +1,76 @@
 import "./AssistantChat.css"
-import React, {useCallback, useState} from 'react';
+import React, {useCallback, useState, useEffect} from 'react';
 import Anthropic from '@anthropic-ai/sdk';
 import {ChatMessageList, ChatMessageListSizeParams} from './ChatMessageList';
-import {ChatDisplayItem, ChatUser} from "../../types/ChatDisplayItem";
+import {ChatItem, chatItemToAnthropicMessage, ChatUser} from "../../types/ChatItem";
 import {ChatMessageItemResources, ChatMessageItemSizeParams} from './ChatMessageItem';
 import { ChatMessageInputBox, ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams } from './ChatMessageInputBox';
 import { ANTHROPIC_API_KEY } from "../../secrets";
 import TextBlock = Anthropic.TextBlock;
+import {AnthropicMessageParam} from "../../types/AnthropicMessageParam";
 
 const anthropic = new Anthropic({
     apiKey: ANTHROPIC_API_KEY,
-    dangerouslyAllowBrowser: true 
+    dangerouslyAllowBrowser: true
 });
 
 interface AssistantChatProps {
-    getCustomPrompt: (input: string) => string;
+    transformPrompt: (chatHistory: ChatItem[]) => [AnthropicMessageParam[], string | null];
     chatMessageItemResources: ChatMessageItemResources;
     chatMessageItemSizeParams: ChatMessageItemSizeParams;
     chatMessageListSizeParams: ChatMessageListSizeParams;
     chatMessageInputBoxResources: ChatMessageInputBoxResources;
     chatMessageInputBoxSizeParams: ChatMessageInputBoxSizeParams;
+    defaultChatHistory?: ChatItem[]; // New prop for default chat history
+    onNewMessage?: (message: ChatItem) => void; // New callback prop
 }
 
-const AssistantChat: React.FC<AssistantChatProps> = ({ getCustomPrompt, chatMessageItemResources, chatMessageItemSizeParams, chatMessageListSizeParams, chatMessageInputBoxResources, chatMessageInputBoxSizeParams }) => {
-    const [chatHistory, setChatHistory] = useState<ChatDisplayItem[]>([]);
+const AssistantChat: React.FC<AssistantChatProps> = ({
+    transformPrompt,
+    chatMessageItemResources,
+    chatMessageItemSizeParams,
+    chatMessageListSizeParams,
+    chatMessageInputBoxResources,
+    chatMessageInputBoxSizeParams,
+    defaultChatHistory = [], // Default value is an empty array
+    onNewMessage
+}) => {
+    const [chatHistory, setChatHistory] = useState<ChatItem[]>(defaultChatHistory);
     const [ongoingAssistantResponse, setOngoingAssistantResponse] = useState<string | null>(null);
-    
+
+    useEffect(() => {
+        // Call onNewMessage for each message in the default chat history
+        defaultChatHistory.forEach(message => {
+            onNewMessage?.(message);
+        });
+    }, [defaultChatHistory, onNewMessage]); // Empty dependency array ensures this runs only once on mount
+
     const handleSubmit = useCallback(async (userInput: string) => {
-        // Add user message to chat history
-        setChatHistory(prev => [...prev, { sender: ChatUser.USER, message: userInput }]);
-        
-        // Process input with custom prompt
-        const processedInput = getCustomPrompt(userInput);
-        
+        const userMessage: ChatItem = { sender: ChatUser.USER, message: userInput };
+        const newChatHistory = [...chatHistory, userMessage];
+        setChatHistory(newChatHistory);
+        onNewMessage?.(userMessage);
+
+        const [processedPrompt, systemPrompt] = transformPrompt(newChatHistory);
+
         setOngoingAssistantResponse('');
 
         let finalMessage = await anthropic.messages.stream({
-            messages: [{role: 'user', content: processedInput}],
+            messages: processedPrompt,
             model: 'claude-3-5-sonnet-20240620',
-            max_tokens: 1024,
+            system: (systemPrompt === null ? undefined : systemPrompt),
+            max_tokens: 4096,
         }).on('text', (text) => {
             setOngoingAssistantResponse(prev => (prev ?? '') + text);
         }).finalMessage();
 
-        // Add assistant's response to chat history
-        setChatHistory(prev => [...prev, { sender: ChatUser.JESS, message: (finalMessage.content[0] as TextBlock).text }]);
+        const assistantMessage: ChatItem = { sender: ChatUser.JESS, message: (finalMessage.content[0] as TextBlock).text };
+        setChatHistory(prev => [...prev, assistantMessage]);
+        onNewMessage?.(assistantMessage); // Call the callback with the assistant's message
 
         setOngoingAssistantResponse(null);
-    }, [getCustomPrompt, ongoingAssistantResponse]);
-    
+    }, [transformPrompt, chatHistory, onNewMessage]);
+
     return (
         <div
             className="assistant-chat"

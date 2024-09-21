@@ -1,9 +1,11 @@
 import React from 'react';
 import './Onboarding.css';
-import { ChatMessageListSizeParams } from "../../Components/Chat/ChatMessageList";
-import { ChatMessageItemResources, ChatMessageItemSizeParams } from '../../Components/Chat/ChatMessageItem';
-import { ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams } from '../../Components/Chat/ChatMessageInputBox';
+import {ChatMessageListSizeParams} from "../../Components/Chat/ChatMessageList";
+import {ChatMessageItemResources, ChatMessageItemSizeParams} from '../../Components/Chat/ChatMessageItem';
+import {ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams} from '../../Components/Chat/ChatMessageInputBox';
 import AssistantChat from '../../Components/Chat/AssistantChat';
+import {JESS_INITIAL_GREETING, onboardingPrompts} from "./OnboardingPrompts";
+import {ChatUser} from "../../types/ChatItem";
 
 const OnboardingPage = () => {
     const chatMessageItemResources: ChatMessageItemResources = {
@@ -80,12 +82,15 @@ const OnboardingPage = () => {
                 <img src="/onboarding/title_text.png" alt="Get Started with Jess" width={1098} height={54} />
             </div>
             <AssistantChat
-                getCustomPrompt={(prompt) => prompt}
+                transformPrompt={onboardingPrompts}
                 chatMessageItemResources={chatMessageItemResources}
                 chatMessageItemSizeParams={chatMessageItemSizeParams}
                 chatMessageListSizeParams={chatMessageListSizeParams}
                 chatMessageInputBoxResources={chatMessageInputBoxResources}
                 chatMessageInputBoxSizeParams={chatMessageInputBoxSizeParams}
+                defaultChatHistory={[
+                    { sender: ChatUser.JESS, message: JESS_INITIAL_GREETING }
+                ]}
             />
         </div>
     );

@@ -1,7 +1,7 @@
 import React from 'react';
 import './ChatMessageList.css';
 import { ChatMessageItem, ChatMessageItemResources, ChatMessageItemSizeParams } from './ChatMessageItem';
-import { ChatDisplayItem } from "../../types/ChatDisplayItem";
+import { ChatItem } from "../../types/ChatItem";
 
 interface ChatMessageListSizeParams {
     topPadding: number;
@@ -10,7 +10,7 @@ interface ChatMessageListSizeParams {
 }
 
 interface ChatMessageListProps {
-    chatItems: ChatDisplayItem[];
+    chatItems: ChatItem[];
 
     chatMessageItemResources: ChatMessageItemResources;
     chatMessageItemSizeParams: ChatMessageItemSizeParams;

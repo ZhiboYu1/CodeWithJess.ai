@@ -1,6 +1,6 @@
 import React from 'react';
 import './ChatMessageItem.css';
-import { ChatDisplayItem, ChatUser } from "../../types/ChatDisplayItem";
+import { ChatItem, ChatUser } from "../../types/ChatItem";
 
 interface ChatMessageItemResources {
     userIcon: string;
@@ -27,7 +27,7 @@ interface ChatMessageItemSizeParams {
 }
 
 interface ChatMessageItemProps {
-    chatItem: ChatDisplayItem;
+    chatItem: ChatItem;
     resources: ChatMessageItemResources;
     sizeParams: ChatMessageItemSizeParams;
 }

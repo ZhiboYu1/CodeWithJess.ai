@@ -75,7 +75,7 @@ const ChatMessageInputBox: React.FC<ChatMessageInputBoxProps> = ({ resources, si
                     value={message}
                     onChange={handleInputChange}
                     onKeyPress={handleKeyPress}
-                    placeholder="Type a message..."
+                    placeholder="Message Jess..."
                     style={{
                         width: `${sizeParams.inputFieldWidth}px`,
                         fontSize: `${sizeParams.inputBoxFontSize}px`,
