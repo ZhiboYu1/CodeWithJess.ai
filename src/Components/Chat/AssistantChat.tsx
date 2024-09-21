@@ -17,6 +17,7 @@ const anthropic = new Anthropic({
 interface AssistantChatProps {
     transformPrompt: (chatHistory: ChatItem[]) => [AnthropicMessageParam[], string | null];
     assistantTools: Anthropic.Messages.Tool[];
+    handleToolUse: (tool_name: string, tool_input: any) => string | null;
     chatMessageItemResources: ChatMessageItemResources;
     chatMessageItemSizeParams: ChatMessageItemSizeParams;
     chatMessageListSizeParams: ChatMessageListSizeParams;
@@ -29,6 +30,7 @@ interface AssistantChatProps {
 const AssistantChat: React.FC<AssistantChatProps> = ({
     transformPrompt,
     assistantTools,
+    handleToolUse,
     chatMessageItemResources,
     chatMessageItemSizeParams,
     chatMessageListSizeParams,
@@ -67,11 +69,21 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
             setOngoingAssistantResponse(prev => (prev ?? '') + text);
         }).finalMessage();
 
-        const assistantMessage: ChatItem = { sender: ChatUser.JESS, message: (finalMessage.content[0] as TextBlock).text };
-        setChatHistory(prev => [...prev, assistantMessage]);
-        onNewMessage?.(assistantMessage); // Call the callback with the assistant's message
-
         setOngoingAssistantResponse(null);
+
+        for (const contentBlock of finalMessage.content) {
+            if (contentBlock.type === 'text') {
+                const assistantMessage: ChatItem = { sender: ChatUser.JESS, message: (finalMessage.content[0] as TextBlock).text };
+                setChatHistory(prev => [...prev, assistantMessage]);
+                onNewMessage?.(assistantMessage);
+            } else if (contentBlock.type === 'tool_use') {
+                const toolUse = contentBlock as Anthropic.ToolUseBlock;
+                let result = handleToolUse(toolUse.name, toolUse.input);
+                if (result !== null) {
+                    // TODO: Handle tool results
+                }
+            }
+        }
     }, [chatHistory, onNewMessage, transformPrompt, assistantTools]);
 
     return (
