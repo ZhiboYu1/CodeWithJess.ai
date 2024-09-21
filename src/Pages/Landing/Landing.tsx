@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './Landing.css';
 
 const LandingPage = () => {
@@ -13,13 +14,13 @@ const LandingPage = () => {
                     alt="Top section"
                     className="top-image"
                 />
-                <a href="/your-link-destination">
+                <Link to="/onboarding">
                     <img
                         src="/landing/start.png"
                         alt="Bottom section"
                         className="bottom-image"
                     />
-                </a>
+                </Link>
             </div>
         </div>
     );

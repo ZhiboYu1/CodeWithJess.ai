@@ -1,0 +1,12 @@
+.chat-message-item {
+    display: flex;
+    align-items: flex-start;
+}
+
+.chat-message-item.user-message {
+    flex-direction: row-reverse;
+}
+
+.message-content {
+    flex: 1;
+}
