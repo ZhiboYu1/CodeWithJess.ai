@@ -1,19 +1,11 @@
-// AssistantChat:
-/*
-a mega-component that combines together the ChatMessageList and the input box and also further maintains state:
-we do need a way to customize the prompt of individual objects, so the AssistantChat component will need to accept a prop that allows the user to pass in a custom
-function that takes a string and returns a string (the prompt).
-the component will maintain a state of the chat history, and the user's input, and the assistant's response.
-it should also stream the assistant's response, and update the chat history as it does so.
-*/
-
+import "./AssistantChat.css"
 import React, {useCallback, useState} from 'react';
 import Anthropic from '@anthropic-ai/sdk';
 import {ChatMessageList, ChatMessageListSizeParams} from './ChatMessageList';
 import {ChatDisplayItem, ChatUser} from "../../types/ChatDisplayItem";
 import {ChatMessageItemResources, ChatMessageItemSizeParams} from './ChatMessageItem';
 import { ChatMessageInputBox, ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams } from './ChatMessageInputBox';
-import { ANTHROPIC_API_KEY} from "../../secrets";
+import { ANTHROPIC_API_KEY } from "../../secrets";
 import TextBlock = Anthropic.TextBlock;
 
 const anthropic = new Anthropic({
@@ -58,13 +50,31 @@ const AssistantChat: React.FC<AssistantChatProps> = ({ getCustomPrompt, chatMess
     }, [getCustomPrompt, ongoingAssistantResponse]);
     
     return (
-        <div className="assistant-chat">
-            <ChatMessageList
-                chatItems={ongoingAssistantResponse !== null ? [...chatHistory, { sender: ChatUser.JESS, message: ongoingAssistantResponse }] : chatHistory}
-                chatMessageItemResources={chatMessageItemResources}
-                chatMessageItemSizeParams={chatMessageItemSizeParams}
-                chatMessageListSizeParams={chatMessageListSizeParams}
-            />
+        <div
+            className="assistant-chat"
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'space-between',
+                height: '100%',
+            }}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: '100%',
+                    overflowY: 'scroll',
+                }}
+                className={'invisible-scrollbar'}
+            >
+                <ChatMessageList
+                    chatItems={ongoingAssistantResponse !== null ? [...chatHistory, { sender: ChatUser.JESS, message: ongoingAssistantResponse }] : chatHistory}
+                    chatMessageItemResources={chatMessageItemResources}
+                    chatMessageItemSizeParams={chatMessageItemSizeParams}
+                    chatMessageListSizeParams={chatMessageListSizeParams}
+                />
+            </div>
             <ChatMessageInputBox
                 resources={chatMessageInputBoxResources}
                 sizeParams={chatMessageInputBoxSizeParams}

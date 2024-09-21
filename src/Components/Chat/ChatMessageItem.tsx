@@ -115,6 +115,7 @@ const ChatMessageItem: React.FC<ChatMessageItemProps> = ({
                         lineHeight: messageTextLineHeight,
                         marginBottom: messageTextParagraphSpacing,
                         textAlign: (isUserMessage ? 'right' : 'left'),
+                        whiteSpace: 'pre-wrap',
                     }}
                 >
                     {chatItem.message}

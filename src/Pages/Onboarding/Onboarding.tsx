@@ -64,7 +64,29 @@ const OnboardingPage = () => {
     };
 
     return (
-        <div className="chat-window" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#000000', height: '100vh' }}>
+        <div
+            className="chat-window"
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                backgroundColor: '#000000',
+                height: '100vh',
+                paddingBottom: 40,
+                boxSizing: 'border-box'
+            }}
+        >
+            <div 
+                className="chat-window-header"
+                style={{
+                    width: 1098,
+                    height: 54,
+                    marginTop: 60,
+                    marginBottom: 30
+                }}
+            >
+                <img src="/onboarding/title_text.png" alt="Get Started with Jess" width={1098} height={54} />
+            </div>
             <AssistantChat
                 getCustomPrompt={(prompt) => prompt}
                 chatMessageItemResources={chatMessageItemResources}
