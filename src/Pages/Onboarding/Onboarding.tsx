@@ -1,19 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import './Onboarding.css';
-import { ChatDisplayItem, ChatUser } from "../../types/ChatDisplayItem";
 import { ChatMessageListSizeParams } from "../../Components/Chat/ChatMessageList";
 import { ChatMessageItemResources, ChatMessageItemSizeParams } from '../../Components/Chat/ChatMessageItem';
-import { ChatMessageInputBox, ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams } from '../../Components/Chat/ChatMessageInputBox';
+import { ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams } from '../../Components/Chat/ChatMessageInputBox';
 import AssistantChat from '../../Components/Chat/AssistantChat';
 
 const OnboardingPage = () => {
-    const [chatItems, setChatItems] = useState<ChatDisplayItem[]>([
-        { sender: ChatUser.USER, message: "Hello, how are you?" },
-        { sender: ChatUser.JESS, message: "Hi there! I'm doing well, thank you. How can I assist you today?" },
-        { sender: ChatUser.USER, message: "I'm looking for some advice on starting a vegetable garden. Do you have any tips?" },
-        { sender: ChatUser.JESS, message: "Absolutely! Starting a vegetable garden can be a rewarding experience. Here are a few tips to get you started: "}
-    ]);
-
     const chatMessageItemResources: ChatMessageItemResources = {
         userIcon: "/onboarding/human_icon.png",
         jessIcon: "/onboarding/jess_icon.png",
