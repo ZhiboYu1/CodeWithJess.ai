@@ -88,6 +88,7 @@ const ChatMessageInputBox: React.FC<ChatMessageInputBoxProps> = ({ resources, si
                         backgroundColor: 'transparent',
                         boxSizing: 'border-box',
                         color: 'white',
+                        overflow: 'hidden',
                     }}
                     minRows={1}
                     maxRows={7}

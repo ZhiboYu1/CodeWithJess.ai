@@ -24,12 +24,14 @@ class EditorJessState {
         return EditorJessState.instance;
 
     }
+
     public static initialize(editorCode : string, editorLanguage : string, editorSelection: string, currentExercise: Exercise, currentTestWindowContents: string[]){
         if (EditorJessState.instance != null){
             throw new Error("EditorJessState is already initialized.");
         }
         EditorJessState.instance = new EditorJessState(editorCode, editorLanguage, editorSelection, currentExercise, currentTestWindowContents);
     }
+
     public getCode(): string{
         return this.editorCode;
     }

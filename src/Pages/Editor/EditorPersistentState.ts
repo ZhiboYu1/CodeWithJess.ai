@@ -92,6 +92,7 @@ class EditorPersistentState {
             new Map(stateObject.exercisePlanAssociatedData)
         );
     }
+
 }
 
 export default EditorPersistentState;

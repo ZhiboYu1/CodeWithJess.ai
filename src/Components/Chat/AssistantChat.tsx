@@ -9,7 +9,7 @@ import { ANTHROPIC_API_KEY } from "../../secrets";
 import TextBlock = Anthropic.TextBlock;
 import {
     AnthropicMessageObject,
-    AnthropicObject,
+    AnthropicObject, anthropicObjectToDisplayChatItem,
     createAnthropicMessageObjectUser,
     createMockAnthropicMessageObjectAssistant,
     sanitizeAnthropicObjectForTransfer
@@ -59,10 +59,12 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
         const processedPrompt = transformPrompt(newChatHistory);
         const sanitizedPrompt = processedPrompt.map(sanitizeAnthropicObjectForTransfer);
 
+        console.log("We are giving", sanitizedPrompt);
+
         setOngoingAssistantResponse('');
 
         let finalMessage = await anthropic.messages.stream({
-            messages: sanitizedPrompt,
+            messages: sanitizedPrompt as any,
             model: 'claude-3-5-sonnet-20240620',
             tools: assistantTools,
             system: (systemPrompt === null ? undefined : systemPrompt),
@@ -95,7 +97,8 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
         }
     }, [chatHistory, onNewMessage, assistantTools, handleToolUse]);
 
-    let objectsT = {ongoingAssistantResponse !== null ? [...chatHistory, createMockAnthropicMessageObjectAssistant(ongoingAssistantResponse)] : chatHistory};
+    let objectsToDisplay = ongoingAssistantResponse ? [...chatHistory, createMockAnthropicMessageObjectAssistant(ongoingAssistantResponse)] : chatHistory;
+    let displayChatItems: DisplayChatItem[] = objectsToDisplay.map(anthropicObjectToDisplayChatItem).filter((item): item is DisplayChatItem => item !== null);
 
     return (
         <div
@@ -109,15 +112,14 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
         >
             <div
                 style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: '100%',
                     overflowY: 'scroll',
+                    height: '100%',
+                    flexGrow: 1,
                 }}
                 className={'invisible-scrollbar'}
             >
                 <ChatMessageList
-                    chatItems=
+                    chatItems={displayChatItems}
                     chatMessageItemResources={chatMessageItemResources}
                     chatMessageItemSizeParams={chatMessageItemSizeParams}
                     chatMessageListSizeParams={chatMessageListSizeParams}

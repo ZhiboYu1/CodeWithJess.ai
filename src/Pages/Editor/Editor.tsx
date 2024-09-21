@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import MonacoEditor from '@monaco-editor/react';
-import ThemeManager from './ThemeEditor';
+import React, { useState, useRef, useEffect } from 'react';
+import MonacoEditorManager from './MonacoEditorManager';
 import { Editable, useEditor } from "@wysimark/react"
 import "./Editor.css";
 import EditorPersistentState from "./EditorPersistentState";
 import EditorJessState from "./EditorJessState";
+import ThemeEditor from "./ThemeEditor";
 
 interface EditorProps {
     appState: EditorPersistentState;
@@ -22,42 +22,94 @@ const Editor = () => {
     const [code, setCode] = useState('// Exercise Plans Go Here');
     const [problemViewMarkdown, setProblemViewMarkdown] = useState("# Example Problem");
     const [output, setOutput] = useState<string>(''); // Placeholder for terminal output
-    const [terminalInput, setTerminalInput] = useState<string>('');
+    const [userInput, setUserInput] = useState("");
+    const [problemHeight, setProblemHeight] = useState(75); // in percentage
+    const [isResizing, setIsResizing] = useState(false);
 
     const ProblemView = useEditor({});
+    const editorContainerRef = useRef<HTMLDivElement>(null);
+    const problemRef = useRef<HTMLDivElement>(null);
+    const outputRef = useRef<HTMLDivElement>(null);
+    let editorManager: MonacoEditorManager | null = null;
+
+    useEffect(() => {
+        if (editorContainerRef.current) {
+            editorManager = new MonacoEditorManager(editorContainerRef.current, 'python', '# Write your code here');
+
+            // Initialize the editor
+            editorManager.initEditor();
+
+            // Handle cleanup when component unmounts
+            return () => {
+                editorManager?.disposeEditor();
+            };
+        }
+    }, []);
 
     const handleEditorChange = (value: string | undefined) => {
-        setCode(value || '');
-    };
-
-    const handleSubmit = () => {
-        const placeholderOutput = "Code executed successfully\n"; // Placeholder output
-        setOutput(placeholderOutput + output); // Append to terminal output
-        console.log("Code submitted: ", code);
+        const updatedCode = value || '';
+        setCode(updatedCode);
+        //Sync with Jess State
+        const jessState = EditorJessState.getInstance();
+        jessState.setCode(updatedCode);
+        //sync with global state and persist it
     };
 
     // Initialize the theme when the component mounts
-    useEffect(() => {
-        ThemeManager.initTheme();
-        ThemeManager.applyTheme('custom-dark-photo');
-    }, []);
+    const setEditorTheme = () => {
+        ThemeEditor.initTheme()
+        ThemeEditor.setTheme()
+    }
 
-    const handleTerminalInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTerminalInput(event.target.value);
+    const handleSubmit = () => {
+        // Placeholder output, simulate execution and output.
+        const simulatedOutput = `Executing...\nResult: 42\n`;
+        setOutput(prevOutput => `${prevOutput}\n> ${userInput}\n${simulatedOutput}`);
+        setUserInput("");  // Clear the input after submission
     };
 
-    const handleTerminalSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        // Placeholder: add terminal input to the output
-        const userCommand = `> user@editor:~$ ${terminalInput}\n`;
-        setOutput(output + userCommand);
-        setTerminalInput(''); // Clear the input after submission
+    const handleSelectionChange = (selection: string) => {
+        //sync with jess state
+        const jessState = EditorJessState.getInstance();
+        jessState.setSelection(selection);
+        console.log('Selected code: ', selection);
+    }
+
+    // Resizing window logic
+    const handleMouseDown = () => {
+        setIsResizing(true);
     };
+
+    const handleMouseMove = (e: MouseEvent) => {
+        if (!isResizing) return;
+
+        const containerHeight = problemRef.current?.parentElement?.offsetHeight || 0;
+        const newHeight = (e.clientY / containerHeight) * 100;
+
+        if (newHeight > 10 && newHeight < 90) { // Restrict resizing to between 10% and 90%
+            setProblemHeight(newHeight);
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsResizing(false);
+    };
+
+    React.useEffect(() => {
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('mouseup', handleMouseUp);
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [isResizing]);
+
 
     return (
         <div className={"master-container"}>
             <div className={"main-container"}>
-                <div className={"editor-container"}>
+                <div className={"editor-container"} ref={editorContainerRef}>
                     {/* must be able to call `submit`
                      must have and mutate code
                      jess querying functionality: what needs to be done here?
@@ -68,34 +120,28 @@ const Editor = () => {
                      also need to communicate important global jess context back to the app:
                      - the current code + selection
                      we can use this communication for persisting code to disk */}
-                    <MonacoEditor
-                        height="90vh"
-                        theme="custom-dark"
-                        defaultLanguage="python"
-                        defaultValue={code}
-                        onChange={handleEditorChange}
-                    />
-                    <button onClick={handleSubmit}>Run Code</button>
+                    <button className="run-button" onClick={handleSubmit}>Run Code</button>
                 </div>
                 <div className={"problem-and-output-container"}>
-                    <div className={"problem-container"}>
-                        {/* // this is the easiest part. needs a problem.
-                        // also needs jess querying functionality. i don't know
-                        // how specifically this must be done, but we should be
-                        // able to copy the implementation directly from the editor
-                        // easy easy easy */}
-                        <Editable
-                            editor={ProblemView}
-                            value={problemViewMarkdown}
-                            readOnly={true} // Make it read-only for the client
-                        />
+                    <div
+                        className="problem-container"
+                        ref={problemRef}
+                        style={{ height: `${problemHeight}%` }}
+                    >
+                        <h1>Problem</h1>
+                        <p>Problem description goes here...</p>
                     </div>
-                    <div className={"output-container"}>
-                        {/* // needs a copy of the code.
-                        // needs to sync the current state of the window back to the app as
-                        // part of jess context
-                        // let's not persist anything in the output container to disk */}
-
+                    <div
+                        className="resize-divider"
+                        onMouseDown={handleMouseDown}
+                    ></div>
+                    <div
+                        className="output-container"
+                        ref={outputRef}
+                        style={{ height: `${100 - problemHeight}%` }}
+                    >
+                        <h1>Output</h1>
+                        <p>Terminal output goes here...</p>
                     </div>
                 </div>
             </div>

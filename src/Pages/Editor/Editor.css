@@ -14,8 +14,9 @@ body, html {
 /* Master container wraps all sections */
 .master-container {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     height: 100vh;
+    background-color: #121212; /* Dark background for the overall page */
 }
 
 /* Main container (Editor + Problem/Output) */
@@ -24,64 +25,137 @@ body, html {
     flex-direction: row;
     flex: 1;
     height: 100%;
-    background-color: #1e1e1e;
+    padding: 20px;
+    gap: 20px; /* Space between the editor and problem/output sections */
+    background-color: #121212;
 }
 
 /* Editor container */
 .editor-container {
-    flex: 3; /* Editor takes more space */
+    flex: 1; /* Editor takes up half of the width */
     display: flex;
     flex-direction: column;
-    padding: 16px;
-    background-color: #252526;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    position: relative; /* To position the buttons inside */
+}
+
+.editor-container .monaco-editor {
+    flex-grow: 1;
+    border-radius: 8px;
+}
+
+/* Submit and Ask Jess buttons (at the top of the editor) */
+.editor-container .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
 }
 
 .editor-container button {
-    margin-top: 10px;
-    padding: 10px 15px;
-    background-color: #007acc;
+    padding: 10px 20px;
     border: none;
-    color: white;
-    cursor: pointer;
+    border-radius: 8px;
     font-size: 1rem;
-    border-radius: 5px;
+    cursor: pointer;
+    color: white;
 }
 
-.editor-container button:hover {
-    background-color: #005f9e;
+.submit-button {
+    background-color: #4CAF50;
 }
 
-/* Problem/Output container wraps both problem and output */
+.ask-jess-button {
+    background-color: #FF69B4;
+}
+
+/* Problem and Output Container */
 .problem-and-output-container {
-    flex: 2; /* Take up a smaller portion compared to editor */
     display: flex;
     flex-direction: column;
-    padding: 16px;
-    background-color: #333333;
+    width: 50%; /* This will take the other half of the screen */
+    gap: 20px;
 }
 
 /* Problem container */
 .problem-container {
-    flex: 1;
-    margin-bottom: 10px;
-    padding: 10px;
+    flex-grow: 3; /* Takes up 3/4 of the height */
     background-color: #1e1e1e;
+    padding: 20px;
     color: white;
     border-radius: 8px;
+    height: auto;
+    overflow-y: auto;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Output container */
+.problem-container h1 {
+    color: #FF69B4; /* Styling for headings */
+}
+
+/* Output / Terminal container */
 .output-container {
-    flex: 1;
-    padding: 10px;
-    background-color: #1e1e1e;
+    flex-grow: 1; /* Takes up 1/4 of the height */
+    background-color: #282c34;
+    padding: 15px;
     color: white;
     border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Progress container (optional) */
-.progress-container {
-    width: 20%;
-    background-color: #1a1a1a;
-    padding: 16px;
+/* Terminal Window Styling */
+.terminal-window {
+    background-color: #1e1e1e;
+    color: #d4d4d4;
+    padding: 10px;
+    border-radius: 8px;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal-output {
+    flex-grow: 1;
+    white-space: pre-wrap;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    color: #00ff00;
+}
+
+.terminal-input-container {
+    display: flex;
+    align-items: center;
+    background-color: #1e1e1e;
+    padding: 5px;
+}
+
+.terminal-prefix {
+    color: #00ff00;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.terminal-input {
+    background-color: #1e1e1e;
+    border: none;
+    color: #d4d4d4;
+    flex-grow: 1;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+}
+
+.terminal-input:focus {
+    outline: none;
+}
+
+/* Disable ProblemView Editing */
+.problem-container[contenteditable="false"] {
+    background-color: #2e2e2e;
+    color: #d4d4d4;
+    cursor: not-allowed;
 }

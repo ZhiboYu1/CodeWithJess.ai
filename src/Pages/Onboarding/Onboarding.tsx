@@ -7,6 +7,7 @@ import AssistantChat from '../../Components/Chat/AssistantChat';
 import {
     getOnboardingAssistantTools,
     ONBOARDING_INITIAL_MESSAGES, ONBOARDING_SYSTEM_PROMPT,
+    OnboardingAssistantToolInput,
 } from "./OnboardingAssistantPrompts";
 import {ChatItemRole} from "../../types/DisplayChatItem";
 import {AnthropicObject} from "../../types/AnthropicObjects";
@@ -70,7 +71,6 @@ const OnboardingPage = () => {
                 alignItems: 'center',
                 backgroundColor: '#000000',
                 height: '100vh',
-                paddingBottom: 40,
                 boxSizing: 'border-box'
             }}
         >
@@ -85,20 +85,33 @@ const OnboardingPage = () => {
             >
                 <img src="/onboarding/title_text.png" alt="Get Started with Jess" width={1098} height={54} />
             </div>
-            <AssistantChat
-                transformPrompt={(chatHistory: AnthropicObject[]) => {return chatHistory}}
-                systemPrompt={ONBOARDING_SYSTEM_PROMPT}
-                assistantTools={getOnboardingAssistantTools()}
-                chatMessageItemResources={chatMessageItemResources}
-                chatMessageItemSizeParams={chatMessageItemSizeParams}
-                chatMessageListSizeParams={chatMessageListSizeParams}
-                chatMessageInputBoxResources={chatMessageInputBoxResources}
-                chatMessageInputBoxSizeParams={chatMessageInputBoxSizeParams}
-                defaultChatHistory={ONBOARDING_INITIAL_MESSAGES}
-                handleToolUse={(tool_name, tool_input) => {
-                    return null;
+            <div
+                style={{
+                    marginBottom: 40,
+                    height: 'calc(100% - 54px - 60px - 30px - 40px)',
                 }}
-            />
+            >
+                <AssistantChat
+                    transformPrompt={(chatHistory: AnthropicObject[]) => {return chatHistory}}
+                    systemPrompt={ONBOARDING_SYSTEM_PROMPT}
+                    assistantTools={getOnboardingAssistantTools()}
+                    chatMessageItemResources={chatMessageItemResources}
+                    chatMessageItemSizeParams={chatMessageItemSizeParams}
+                    chatMessageListSizeParams={chatMessageListSizeParams}
+                    chatMessageInputBoxResources={chatMessageInputBoxResources}
+                    chatMessageInputBoxSizeParams={chatMessageInputBoxSizeParams}
+                    defaultChatHistory={ONBOARDING_INITIAL_MESSAGES}
+                    handleToolUse={(tool_name, tool_input) => {
+                        if (tool_name !== "finish_onboarding") {
+                            // error
+                            return null;
+                        }
+                        let onboardingData: OnboardingAssistantToolInput = tool_input;
+
+                        return tool_input;
+                    }}
+                />
+            </div>
         </div>
     );
 };

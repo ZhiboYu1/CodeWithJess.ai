@@ -56,10 +56,6 @@ function anthropicObjectToDisplayChatItem(anthropicObject: AnthropicObject): Dis
 }
 
 function sanitizeAnthropicObjectForTransfer(anthropicObject: AnthropicObject): any {
-    if (anthropicObject.rawObject) {
-        return anthropicObject.rawObject;
-    }
-
     if (anthropicObject.type === 'message') {
         return {
             role: anthropicObject.role,

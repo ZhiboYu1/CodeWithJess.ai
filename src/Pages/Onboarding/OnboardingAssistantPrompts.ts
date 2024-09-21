@@ -50,6 +50,15 @@ const USER_INITIAL_GREETING: string = `<system>Please ignore this initial messag
 const JESS_INITIAL_GREETING: string = `Hi! I’m Jess, an AI assistant designed to help beginners learn to code. I'm here to help you get started on your coding journey. Before we dive in, I'd love to get to know you a bit better. What's your name?`;
 
 
+interface OnboardingAssistantToolInput {
+    name: string;
+    goals: string;
+    programming_language: string;
+    constructs_to_learn_or_avoid: string;
+    prior_knowledge: string;
+    additional_notes: string | undefined;
+}
+
 function getOnboardingAssistantTools(): Anthropic.Messages.Tool[] {
     return [
         {
@@ -107,4 +116,5 @@ const ONBOARDING_INITIAL_MESSAGES: AnthropicObject[] = [
 ]
 
 
+export type {OnboardingAssistantToolInput};
 export {ONBOARDING_SYSTEM_PROMPT, ONBOARDING_INITIAL_MESSAGES, getOnboardingAssistantTools};
