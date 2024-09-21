@@ -1,0 +1,30 @@
+.landing-container {
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.content-container {
+    width: 1028px;
+    height: 622px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.top-image {
+    width: 1028px;
+    height: 365px;
+    object-fit: cover;
+}
+
+.bottom-image {
+    width: 499px;
+    height: 122px;
+    object-fit: cover;
+}
