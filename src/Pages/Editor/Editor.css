@@ -16,146 +16,287 @@ body, html {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: #121212; /* Dark background for the overall page */
+    background-color: #121212;
 }
 
 /* Main container (Editor + Problem/Output) */
 .main-container {
     display: flex;
     flex-direction: row;
-    flex: 1;
     height: 100%;
     padding: 20px;
-    gap: 20px; /* Space between the editor and problem/output sections */
+    gap: 5px;
     background-color: #121212;
 }
 
 /* Editor container */
 .editor-container {
-    flex: 1; /* Editor takes up half of the width */
-    display: flex;
-    flex-direction: column;
     background-color: #1e1e1e;
     border-radius: 8px;
     padding: 20px;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-    position: relative; /* To position the buttons inside */
+    overflow: hidden;
+    overflow-y: auto;
 }
 
-.editor-container .monaco-editor {
-    flex-grow: 1;
-    border-radius: 8px;
+/* Minimalistic scrollbar */
+.editor-container::-webkit-scrollbar,
+.problem-container::-webkit-scrollbar,
+.output-container::-webkit-scrollbar {
+    width: 6px; /* Reduced size */
+    background-color: transparent; /* Hidden by default */
 }
 
-/* Submit and Ask Jess buttons (at the top of the editor) */
-.editor-container .action-buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
+.editor-container::-webkit-scrollbar-thumb,
+.problem-container::-webkit-scrollbar-thumb,
+.output-container::-webkit-scrollbar-thumb {
+    background-color: rgba(200, 200, 200, 0.3); /* More muted, semi-transparent */
+    border-radius: 10px;
 }
 
-.editor-container button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    color: white;
+.editor-container::-webkit-scrollbar-track,
+.problem-container::-webkit-scrollbar-track,
+.output-container::-webkit-scrollbar-track {
+    background-color: transparent; /* Hidden by default */
 }
 
-.submit-button {
-    background-color: #4CAF50;
+.editor-container:hover::-webkit-scrollbar,
+.problem-container:hover::-webkit-scrollbar,
+.output-container:hover::-webkit-scrollbar {
+    background-color: rgba(255, 255, 255, 0.1); /* Slight visibility on hover */
 }
 
-.ask-jess-button {
-    background-color: #FF69B4;
+.editor-container:hover::-webkit-scrollbar-thumb,
+.problem-container:hover::-webkit-scrollbar-thumb,
+.output-container:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 105, 180, 0.4); /* Light pink with muted opacity on hover */
 }
+
+.editor-container {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200, 200, 200, 0.3) transparent;
+}
+
+.editor-container:hover {
+    scrollbar-color: rgba(255, 105, 180, 0.4) rgba(255, 255, 255, 0.1);
+}
+
+/* Terminal minimalistic scrollbar */
+.output-container::-webkit-scrollbar {
+    width: 6px; /* Reduced size */
+    background-color: transparent;
+}
+
+.output-container:hover::-webkit-scrollbar {
+    background-color: rgba(255, 255, 255, 0.1); /* Scrollbar appears on hover */
+}
+
+.output-container::-webkit-scrollbar-thumb {
+    background-color: rgba(200, 200, 200, 0.3); /* Muted */
+    border-radius: 10px;
+}
+
+.output-container:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 105, 180, 0.4); /* Light pink on hover */
+}
+
+/* Resizable dividers */
+.resize-divider-vertical {
+    height: 5px;
+    background: linear-gradient(to right, #ff8103, #ff1c61, #e200a3, #9b04db); /* Pink/orange gradient */
+    cursor: row-resize;
+    margin: 0 10px;
+    border-radius: 4px;
+    box-shadow: 0px 0px 10px rgba(255, 105, 180, 0.4); /* Soft glow */
+    transition: box-shadow 1s ease-in-out;
+}
+
+.resize-divider-horizontal {
+    width: 5px;
+    background: linear-gradient(to bottom, #ff8103, #ff1c61, #e200a3, #9b04db); /* Pink/orange gradient */
+    cursor: col-resize;
+    margin: 0 10px;
+    border-radius: 4px;
+    box-shadow: 0px 0px 10px rgba(255, 105, 180, 0.4); /* Soft glow */
+    transition: box-shadow 1s ease-in-out;
+}
+
+.resize-divider:hover,
+.resize-divider-horizontal:hover {
+    box-shadow: 0px 0px 15px rgba(255, 105, 180, 0.6); /* Stronger glow on hover */
+}
+
 
 /* Problem and Output Container */
 .problem-and-output-container {
     display: flex;
     flex-direction: column;
-    width: 50%; /* This will take the other half of the screen */
-    gap: 20px;
+    gap: 5px;
+    height: 100%;
+    flex-grow: 1;
+    overflow: hidden;
+    text-autospace: none;
+    text-overflow: ellipsis;
+    white-space: normal;
 }
 
-/* Problem container */
 .problem-container {
-    flex-grow: 3; /* Takes up 3/4 of the height */
-    background-color: #1e1e1e;
-    padding: 20px;
-    color: white;
+    background-color: #1e1e1e;  /* Dark background */
+    color: #d4d4d4;  /* Light text color to contrast with dark background */
+    padding: 16px;
     border-radius: 8px;
-    height: auto;
     overflow-y: auto;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+    max-height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.problem-container h1 {
-    color: #FF69B4; /* Styling for headings */
+.problem-container h1,
+.problem-container h2,
+.problem-container h3,
+.problem-container h4,
+.problem-container h5,
+.problem-container h6 {
+    color: #ffffff;
+    margin-top: 16px;
+    margin-bottom: 8px;
 }
+
+.problem-container p {
+    line-height: 1.6;  /* Adds more line spacing for readability */
+    margin-bottom: 12px;
+}
+
+.problem-container blockquote {
+    border-left: 4px solid #d4d4d4;
+    padding-left: 16px;
+    margin: 16px 0;
+    font-style: italic;
+    background-color: #2e2e2e;  /* Darker blockquote background */
+    color: #cccccc;
+    line-height: 1.8;  /* Extra line spacing for blockquotes */
+}
+
+.problem-container code {
+    background-color: #2d2d2d;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-family: 'Courier New', Courier, monospace;
+    color: #dcdcaa;  /* Soft yellow color for code */
+}
+
+.problem-container pre {
+    background-color: #2d2d2d;
+    padding: 12px;
+    border-radius: 8px;
+    overflow-x: auto;
+    color: #dcdcaa;
+}
+
+.problem-container ul,
+.problem-container ol {
+    padding-left: 20px;
+}
+
+.problem-container li {
+    margin-bottom: 8px;
+}
+
 
 /* Output / Terminal container */
 .output-container {
-    flex-grow: 1; /* Takes up 1/4 of the height */
     background-color: #282c34;
     padding: 15px;
     color: white;
-    border-radius: 8px;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
     box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
-}
-
-/* Terminal Window Styling */
-.terminal-window {
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-    padding: 10px;
-    border-radius: 8px;
-    height: 100%;
     overflow-y: auto;
-    display: flex;
-    flex-direction: column;
+    border-radius: 8px;
+    max-height: 100%;
+    flex-grow: 1; /* Make it grow to fill available space */
+    min-height: 0; /* Prevent content from affecting the height */
 }
 
+/* Terminal output section */
 .terminal-output {
-    flex-grow: 1;
-    white-space: pre-wrap;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 14px;
-    color: #00ff00;
+    flex-grow: 1; /* Allows the output section to fill available space */
+    overflow-y: auto; /* Allows scrolling */
+    padding: 10px;
+    white-space: pre-wrap; /* Preserves whitespace for command formatting */
+    font-family: 'Courier New', Courier, monospace; /* Monospace font for terminal */
+    flex-direction: column-reverse; /* Reverse the column direction */
+    
 }
 
-.terminal-input-container {
-    display: flex;
-    align-items: center;
-    background-color: #1e1e1e;
-    padding: 5px;
-}
-
-.terminal-prefix {
-    color: #00ff00;
-    font-family: 'Courier New', Courier, monospace;
-}
-
+/* Terminal input section */
 .terminal-input {
-    background-color: #1e1e1e;
-    border: none;
-    color: #d4d4d4;
-    flex-grow: 1;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 14px;
+    display: flex; /* Align input horizontally */
+    align-items: center; /* Center vertically */
+    margin-top: 10px; /* Spacing above the input */
 }
 
-.terminal-input:focus {
-    outline: none;
+/* Input field styling */
+.terminal-input input {
+    flex-grow: 1; /* Allow input to grow */
+    background-color: #1e1e1e; /* Match terminal theme */
+    border: none; /* Remove default border */
+    color: white; /* Text color */
+    padding: 10px; /* Padding for aesthetics */
+    border-radius: 4px; /* Rounded corners */
+    outline: none; /* Remove focus outline */
 }
 
-/* Disable ProblemView Editing */
-.problem-container[contenteditable="false"] {
-    background-color: #2e2e2e;
-    color: #d4d4d4;
-    cursor: not-allowed;
+/* Cursor effect for input */
+.terminal-input input:focus {
+    box-shadow: 0 0 5px rgba(255, 105, 180, 0.6); /* Add a glow effect on focus */
+}
+
+/* Style the prompt */
+.terminal-input span {
+    margin-right: 10px; /* Space between prompt and input */
+}
+
+/* Resizable dividers */
+.resize-divider-vertical {
+    height: 5px;
+    background: linear-gradient(to right, #ff8103, #ff1c61, #e200a3, #9b04db); /* Pink/orange gradient */
+    cursor: ns-resize;
+    margin: 0 10px;
+    border-radius: 4px;
+    box-shadow: 0px 0px 10px rgba(255, 105, 180, 0.4); /* Soft glow */
+    transition: box-shadow .3s ease-in-out;
+}
+
+.resize-divider-horizontal {
+    width: 5px;
+    background: linear-gradient(to bottom, #ff8103, #ff1c61, #e200a3, #9b04db); /* Pink/orange gradient */
+    cursor: ew-resize;
+    margin: 0 10px;
+    border-radius: 4px;
+    box-shadow: 0px 0px 10px rgba(255, 105, 180, 0.4); /* Soft glow */
+    transition: box-shadow .3s ease-in-out;
+}
+
+.resize-divider:hover,
+.resize-divider-horizontal:hover {
+    box-shadow: 0px 0px 15px rgba(255, 105, 180, 0.6); /* Stronger glow on hover */
+}
+
+/* Terminal minimalistic scrollbar */
+.output-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.output-container::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 105, 180, 0.6);
+    border-radius: 10px;
+}
+
+.output-container::-webkit-scrollbar-track {
+    background-color: #282c34;
+}
+
+.problem-container, .output-container, .editor-container {
+    box-sizing: border-box;
+    word-wrap: break-word; /* Ensure long words wrap */
 }

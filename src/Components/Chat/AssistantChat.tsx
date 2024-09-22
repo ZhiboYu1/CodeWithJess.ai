@@ -59,8 +59,6 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
         const processedPrompt = transformPrompt(newChatHistory);
         const sanitizedPrompt = processedPrompt.map(sanitizeAnthropicObjectForTransfer);
 
-        console.log("We are giving", sanitizedPrompt);
-
         setOngoingAssistantResponse('');
 
         let finalMessage = await anthropic.messages.stream({
@@ -68,6 +66,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
             model: 'claude-3-5-sonnet-20240620',
             tools: assistantTools,
             system: (systemPrompt === null ? undefined : systemPrompt),
+            temperature: 0,
             max_tokens: 4096,
         }).on('text', (text) => {
             setOngoingAssistantResponse(prev => (prev ?? '') + text);
@@ -95,7 +94,7 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
                 }
             }
         }
-    }, [chatHistory, onNewMessage, assistantTools, handleToolUse]);
+    }, [chatHistory, onNewMessage, transformPrompt, assistantTools, systemPrompt, handleToolUse]);
 
     let objectsToDisplay = ongoingAssistantResponse ? [...chatHistory, createMockAnthropicMessageObjectAssistant(ongoingAssistantResponse)] : chatHistory;
     let displayChatItems: DisplayChatItem[] = objectsToDisplay.map(anthropicObjectToDisplayChatItem).filter((item): item is DisplayChatItem => item !== null);

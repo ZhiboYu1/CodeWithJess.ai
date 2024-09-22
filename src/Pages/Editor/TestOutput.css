@@ -1,0 +1,44 @@
+.test-output-container {
+    background-color: #1a1a1a;
+    border-radius: 10px;
+    padding: 20px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.test-output-container h3 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.test-output-container p {
+    font-size: 1em;
+    color: #b3b3b3;
+    margin-bottom: 20px;
+}
+
+.test-button {
+    background-color: #1f1f1f;
+    color: #fff;
+    padding: 10px 20px;
+    border: 2px solid #2f2f2f;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    display: flex;
+    align-items: center;
+}
+
+.test-button:hover {
+    background-color: #2f2f2f;
+}
+
+.play-icon {
+    margin-right: 5px;
+    font-size: 1.2em;
+}

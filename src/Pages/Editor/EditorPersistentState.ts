@@ -46,6 +46,10 @@ class EditorPersistentState {
         return EditorPersistentState.instance;
     }
 
+    public static isInitialized(): boolean {
+        return EditorPersistentState.instance !== null;
+    }
+
     private static lastPersistTime: number = 0;
 
     public static appStateUpdated() {

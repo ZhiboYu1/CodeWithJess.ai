@@ -14,7 +14,7 @@ export default class MonacoEditorManager {
     }
 
     // Method to initialize the Monaco editor
-    initEditor() {
+    initEditor(onChangeCallback: (value: string) => void) {
         if (!this.container) throw new Error('Editor container not found');
 
         this.editorInstance = monaco.editor.create(this.container, {
@@ -26,7 +26,13 @@ export default class MonacoEditorManager {
 
         // Apply the custom theme if necessary
         ThemeEditor.initTheme();
-        this.setTheme()
+        this.setTheme();
+
+        // Listen for content changes in the editor and invoke the callback
+        this.editorInstance.onDidChangeModelContent(() => {
+            const updatedCode = this.getCode();
+            onChangeCallback(updatedCode); // Notify changes to Editor component
+        });
     }
 
     // Method to set a theme

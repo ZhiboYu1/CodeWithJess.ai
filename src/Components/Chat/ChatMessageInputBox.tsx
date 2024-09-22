@@ -1,6 +1,7 @@
 import React, { useState, KeyboardEvent } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import './ChatMessageInputBox.css';
+import {generateExercise} from "../../Routines/LessonPlan/generateExercise";
 
 interface ChatMessageInputBoxResources {
     sendButtonImage: string;

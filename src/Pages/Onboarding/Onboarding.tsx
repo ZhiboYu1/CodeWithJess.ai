@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Onboarding.css';
 import {ChatMessageListSizeParams} from "../../Components/Chat/ChatMessageList";
 import {ChatMessageItemResources, ChatMessageItemSizeParams} from '../../Components/Chat/ChatMessageItem';
@@ -9,10 +9,19 @@ import {
     ONBOARDING_INITIAL_MESSAGES, ONBOARDING_SYSTEM_PROMPT,
     OnboardingAssistantToolInput,
 } from "./OnboardingAssistantPrompts";
-import {ChatItemRole} from "../../types/DisplayChatItem";
 import {AnthropicObject} from "../../types/AnthropicObjects";
+import {generateLessonPlan} from "../../Routines/LessonPlan/generateLessonPlan";
+import ModalView from '../../Components/ModalView';
+import {onboardingToMemory} from "../../Routines/Onboarding/onboardingToMemory";
+import {generateExercise} from "../../Routines/LessonPlan/generateExercise";
+import {onboardingInitializeAppState} from "../../Routines/Onboarding/onboardingInitializeAppState";
+import {useNavigate} from "react-router-dom";
 
 const OnboardingPage = () => {
+    const navigate = useNavigate();
+
+    const [isLoading, setIsLoading] = useState(false);
+
     const chatMessageItemResources: ChatMessageItemResources = {
         userIcon: "/onboarding/human_icon.png",
         jessIcon: "/onboarding/jess_icon.png",
@@ -63,55 +72,80 @@ const OnboardingPage = () => {
     };
 
     return (
-        <div
-            className="chat-window"
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                backgroundColor: '#000000',
-                height: '100vh',
-                boxSizing: 'border-box'
-            }}
-        >
-            <div 
-                className="chat-window-header"
-                style={{
-                    width: 1098,
-                    height: 54,
-                    marginTop: 60,
-                    marginBottom: 30
-                }}
-            >
-                <img src="/onboarding/title_text.png" alt="Get Started with Jess" width={1098} height={54} />
-            </div>
-            <div
-                style={{
-                    marginBottom: 40,
-                    height: 'calc(100% - 54px - 60px - 30px - 40px)',
-                }}
-            >
-                <AssistantChat
-                    transformPrompt={(chatHistory: AnthropicObject[]) => {return chatHistory}}
-                    systemPrompt={ONBOARDING_SYSTEM_PROMPT}
-                    assistantTools={getOnboardingAssistantTools()}
-                    chatMessageItemResources={chatMessageItemResources}
-                    chatMessageItemSizeParams={chatMessageItemSizeParams}
-                    chatMessageListSizeParams={chatMessageListSizeParams}
-                    chatMessageInputBoxResources={chatMessageInputBoxResources}
-                    chatMessageInputBoxSizeParams={chatMessageInputBoxSizeParams}
-                    defaultChatHistory={ONBOARDING_INITIAL_MESSAGES}
-                    handleToolUse={(tool_name, tool_input) => {
-                        if (tool_name !== "finish_onboarding") {
-                            // error
-                            return null;
-                        }
-                        let onboardingData: OnboardingAssistantToolInput = tool_input;
+        <div>
+            <ModalView
+                isVisible={isLoading}
+                icon="/onboarding/loading_sparkles.png"
+                iconWidth={135}
+                iconHeight={135}
+                titleImageTopMargin={41}
+                titleImage="/onboarding/loading_text.png"
+                titleImageWidth={770}
+                titleImageHeight={54}
+                messageImageTopMargin={13}
+                messageImage="/onboarding/loading_description.png"
+                messageImageWidth={572}
+                messageImageHeight={72}
+                onTap={() => {console.log("tapped")}}
+                children={
+                    <div
+                        className="chat-window"
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            backgroundColor: '#000000',
+                            height: '100vh',
+                            boxSizing: 'border-box'
+                        }}
+                    >
+                        <div 
+                            className="chat-window-header"
+                            style={{
+                                width: 1098,
+                                height: 54,
+                                marginTop: 60,
+                                marginBottom: 30
+                            }}
+                        >
+                            <img src="/onboarding/title_text.png" alt="Get Started with Jess" width={1098} height={54} />
+                        </div>
+                        <div
+                            style={{
+                                marginBottom: 40,
+                                height: 'calc(100% - 54px - 60px - 30px - 40px)',
+                            }}
+                        >
+                            <AssistantChat
+                                transformPrompt={(chatHistory: AnthropicObject[]) => {return chatHistory}}
+                                systemPrompt={ONBOARDING_SYSTEM_PROMPT}
+                                assistantTools={getOnboardingAssistantTools()}
+                                chatMessageItemResources={chatMessageItemResources}
+                                chatMessageItemSizeParams={chatMessageItemSizeParams}
+                                chatMessageListSizeParams={chatMessageListSizeParams}
+                                chatMessageInputBoxResources={chatMessageInputBoxResources}
+                                chatMessageInputBoxSizeParams={chatMessageInputBoxSizeParams}
+                                defaultChatHistory={ONBOARDING_INITIAL_MESSAGES}
+                                handleToolUse={(tool_name, tool_input) => {
+                                    if (tool_name !== "finish_onboarding") {
+                                        // error
+                                        return null;
+                                    }
+                                    let onboardingData: OnboardingAssistantToolInput = tool_input;
 
-                        return tool_input;
-                    }}
-                />
-            </div>
+                                    setIsLoading(true);
+
+                                    onboardingInitializeAppState(onboardingData).then(() => {
+                                        navigate('/editor', { replace: true });
+                                    });
+
+                                    return null;
+                                }}
+                            />
+                        </div>
+                    </div>
+                }
+            />
         </div>
     );
 };

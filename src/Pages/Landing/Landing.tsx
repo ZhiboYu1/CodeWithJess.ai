@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Landing.css';
+import {generateExercise} from "../../Routines/LessonPlan/generateExercise";
 
 const LandingPage = () => {
     return (

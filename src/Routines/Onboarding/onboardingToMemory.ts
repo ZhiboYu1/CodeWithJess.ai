@@ -1,4 +1,4 @@
-import { OnboardingAssistantToolInput } from "../Pages/Onboarding/OnboardingAssistantPrompts";
+import {OnboardingAssistantToolInput} from "../../Pages/Onboarding/OnboardingAssistantPrompts";
 
 function onboardingToMemory(onboardingData: OnboardingAssistantToolInput): Array<string> {
     return [
@@ -11,4 +11,4 @@ function onboardingToMemory(onboardingData: OnboardingAssistantToolInput): Array
     ];
 }
 
-export {onboardingToMemory};
+export { onboardingToMemory };

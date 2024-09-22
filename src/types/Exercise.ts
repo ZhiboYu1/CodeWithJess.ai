@@ -15,10 +15,9 @@ interface Exercise {
     description: string;
     example: ExerciseExample[];
     constraints: string;
-    mainFunctionSignature: string;
     initialCode: string;
     testCases: TestCase[];
-    additionalNotesToSelf: string;
+    additionalNotesToSelf: string | null;
 }
 
 export type { Exercise, ExerciseExample, TestCase };
