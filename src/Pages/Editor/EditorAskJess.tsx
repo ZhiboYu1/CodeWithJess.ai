@@ -20,9 +20,10 @@ interface ChatProps {
     chatHeight: string;
     location: number;
     getJessState: () => EditorJessState;
+    toNextExercise: () => void;
 }
 
-const EditorAskJess: React.FC<ChatProps> = ({ show, chatHeight, location, getJessState }) => {
+const EditorAskJess: React.FC<ChatProps> = ({ show, chatHeight, location, getJessState, toNextExercise }) => {
     const navigate = useNavigate();
     const mainRef = useRef<HTMLDivElement>(null);
 
@@ -104,8 +105,12 @@ const EditorAskJess: React.FC<ChatProps> = ({ show, chatHeight, location, getJes
                         // error
                         return null;
                     }
-                    let grade: string = tool_input.toLower;
-
+                    console.log("Tool evaluated, grade given", tool_input);
+                    const grade: string = tool_input.grade;
+                    console.log("Grade given, ", grade)
+                    if (grade==="Pass" || grade==="pass") {
+                        toNextExercise();
+                    }
                     return null;
                 }}
             />

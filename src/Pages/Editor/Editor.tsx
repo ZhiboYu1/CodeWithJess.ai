@@ -27,9 +27,8 @@ const Editor: React.FC<EditorProps> = ({
 
     // GLOBAL JESS
 
-    // TODO: global Jess context
-    const currentExercise = editorPersistentState.getCurrentExercise();
-    const [code, setCode] = useState(currentExercise?.initialCode || '');
+    const [currentExercise, setCurrentExercise] = useState<Exercise | null>(editorPersistentState.getCurrentExercise());
+    const [code, setCode] = useState(editorPersistentState.getCurrentExercise()?.initialCode || '');
     const [output, setOutput] = useState<string[]>([]);
     const [userInput, setUserInput] = useState("");
     const [highlightedText, setHighlightedText] = useState<string>('');
@@ -337,7 +336,11 @@ const Editor: React.FC<EditorProps> = ({
     }, []);
 
     const finishLesson = () => {
-
+        console.log("To next")
+        editorPersistentState.toNextExercise();
+        setCurrentExercise(editorPersistentState.getCurrentExercise());
+        setCode(currentExercise?.initialCode || '');
+        setOutput([]);
     }
 
     return (
@@ -473,7 +476,7 @@ const Editor: React.FC<EditorProps> = ({
                     </div>
                 </div>
             </div>
-            <EditorAskJess show={isEditorAskJessOpen} chatHeight={'426px'} location={askJessPosition} getJessState={getJessState} />
+            <EditorAskJess show={isEditorAskJessOpen} chatHeight={'426px'} location={askJessPosition} getJessState={getJessState} toNextExercise={finishLesson} />
             <div className={"progress-container"}>
 
             </div>

@@ -102,6 +102,11 @@ class EditorPersistentState {
         const currentExerciseId = this.lessonPlan[this.indexOfCurrentExercise].id;
         return this.exercisePlanAssociatedData.get(currentExerciseId) || null;
     }
+
+    public getNextExerciseData(): ExercisePlanAssociatedData | null {
+        const currentExerciseId = this.lessonPlan[this.indexOfCurrentExercise].id;
+        return this.exercisePlanAssociatedData.get(currentExerciseId + 1) || null;
+    }
     
     public getCurrentExercise(): Exercise | null {
         let currentExerciseData = this.getCurrentExerciseData();
@@ -111,6 +116,17 @@ class EditorPersistentState {
         }
 
         return currentExerciseData.generatedExercise;
+    }
+
+    public toNextExercise(): Exercise | null {
+        let nextExerciseData = this.getNextExerciseData();
+
+        if (nextExerciseData === null) {
+            return null;
+        }
+        this.indexOfCurrentExercise += 1;
+
+        return nextExerciseData.generatedExercise;
     }
 }
 

@@ -20,7 +20,7 @@ If asked about anything other than code, you will politely reject the user's que
 
 You should not engage in ethical or moral discussions, as these are out of scope for your role. However, you must appropriately refuse requests within your capabilities that are potentially immoral or harmful, such as generating coding exercises involving illegal or destructive activities.
 
-The current date is Wednesday, September 18, 2024. 
+The current date is Wednesday, September 22, 2024. 
 
 You cannot open URLs, images, links, or videos. If it seems like the user is expecting you to do so, clarify the situation and ask the human to paste the relevant text or image content directly into the conversation.
 
@@ -57,6 +57,8 @@ Each of those pieces of context may be extremely or not at all relevant to the q
 When you answer the user's question, it is important to keep in mind and use the information you have about the user. For example, if the user is an absolute beginner, it is crucial to refrain from using more complex terms.
 
 You are working within a relatively small text box, so answer very concisely (though thoroughly!) and be direct.
+
+Your secondary task is to assess the user's current progress through their exercise using the information provided to you in the question, run session, and code. Once you think the user has thoroughly completed the exercise, you may assign them a grade.
 
 </jess_task>
 
@@ -140,7 +142,7 @@ function getGradingAssistantTools(): Anthropic.Messages.Tool[] {
                 },
                 'required': ['grade'],
             },
-            name: 'finish_onboarding',
+            name: 'grade_user',
             description: 'Call this when you believe the user has finished the exercise given to them to the best of their ability, receiving a Pass or Fail. Remember that this will **immediately** end the current conversation and exercise so the user can no longer continue their work on it. Do ***not*** call this if the user has not finished the exercise.',
         }
     ]
