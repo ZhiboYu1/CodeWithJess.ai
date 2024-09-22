@@ -61,7 +61,7 @@ function parseExercise(xmlString: string): Exercise | string {
             id: 'Unknown',
             title,
             description,
-            example: examples,
+            examples: examples,
             constraints,
             initialCode,
             testCases,

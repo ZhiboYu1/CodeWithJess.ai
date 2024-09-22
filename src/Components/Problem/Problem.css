@@ -1,0 +1,70 @@
+.problem-main-container h1 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-weight: 700;
+    font-size: 35px;
+    line-height: 41px;
+    color: #ffffff;
+}
+
+.problem-container-heading {
+    margin-bottom: 10px;
+}
+
+.problem-main-container p {
+    font-size: 20px;
+    line-height: 31px;
+    color: #ffffff;
+    margin: 0;
+}
+
+.problem-container-body {
+    font-size: 22px;
+    font-weight: 500;
+    white-space: pre-wrap;
+    color: #BABBBB;
+    display: flex;
+    flex-direction: column;
+}
+
+.problem-container-body p:first-child {
+    margin-top: 0;
+}
+
+.problem-container-body p {
+    margin-top: 22px;
+}
+
+.problem-container-separator {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    height: 2px;
+    width: 100%;
+    background-color: #FFFFFF;
+    opacity: 0.13;
+}
+
+.problem-example-body {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    font-size: 22px;
+}
+
+.problem-example-io-text {
+    font-weight: 700;
+}
+
+.problem-example-io-value {
+    font-weight: 400;
+}
+
+.problem-example-io-value-code {
+    font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+}
+
+.problem-example-group {
+    display: flex;
+    align-items: center;
+}

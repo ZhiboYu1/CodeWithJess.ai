@@ -1,4 +1,5 @@
 import axios from "axios";
+import {OPENROUTER_API_KEY} from "../secrets";
 
 async function queryOpenAIO1(prompts: Array<string>): Promise<string> {
     let messages: Array<{role: string, content: string}> = [];
@@ -11,7 +12,7 @@ async function queryOpenAIO1(prompts: Array<string>): Promise<string> {
                 messages: messages,
             }, {
                 headers: {
-                    "Authorization": `Bearer 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`,
+                    "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
                     "Content-Type": "application/json"
                 }
             });

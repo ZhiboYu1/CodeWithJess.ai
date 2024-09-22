@@ -3,9 +3,9 @@ import ThemeEditor from './ThemeEditor';
 
 export default class MonacoEditorManager {
     private editorInstance: monaco.editor.IStandaloneCodeEditor | null = null;
-    private container: HTMLElement;
-    private defaultLanguage: string;
-    private defaultValue: string;
+    private readonly container: HTMLElement;
+    private readonly defaultLanguage: string;
+    private readonly defaultValue: string;
 
     constructor(container: HTMLElement, defaultLanguage: string = 'python', defaultValue: string = '// Start coding here') {
         this.container = container;
@@ -21,7 +21,8 @@ export default class MonacoEditorManager {
             value: this.defaultValue,
             language: this.defaultLanguage,
             automaticLayout: true, // Ensures the editor resizes correctly
-            minimap: { enabled: false }
+            minimap: { enabled: false },
+            fontSize: 15
         });
 
         // Apply the custom theme if necessary
@@ -61,5 +62,14 @@ export default class MonacoEditorManager {
     // Clean up when unmounting or closing the editor
     disposeEditor() {
         this.editorInstance?.dispose();
+    }
+
+    public getSelected(): string {
+        const selection = this.editorInstance?.getSelection()
+        if (selection) {
+            return this.editorInstance?.getModel()?.getValueInRange(selection) || '';
+        } else {
+            return '';
+        }
     }
 }

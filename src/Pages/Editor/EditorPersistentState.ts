@@ -18,6 +18,7 @@ interface ExercisePlanAssociatedData {
 
 class EditorPersistentState {
     private static instance: EditorPersistentState | null = null;
+
     public lessonPlan: LessonPlan;
     public indexOfCurrentExercise: number;
     public assistantMemory: string[];
@@ -50,9 +51,9 @@ class EditorPersistentState {
         return EditorPersistentState.instance !== null;
     }
 
-    private static lastPersistTime: number = 0;
+    private lastPersistTime: number = 0;
 
-    public static appStateUpdated() {
+    public appStateUpdated() {
         const currentTime = Date.now();
         const timeSinceLastPersist = currentTime - this.lastPersistTime;
 
@@ -62,7 +63,7 @@ class EditorPersistentState {
         }
     }
 
-    private static persistToDisk() {
+    private persistToDisk() {
         // Get the current EditorPersistentState instance
         const appState = EditorPersistentState.getInstance();
         // Convert the current state to a JSON string
@@ -97,6 +98,20 @@ class EditorPersistentState {
         );
     }
 
+    public getCurrentExerciseData(): ExercisePlanAssociatedData | null {
+        const currentExerciseId = this.lessonPlan[this.indexOfCurrentExercise].id;
+        return this.exercisePlanAssociatedData.get(currentExerciseId) || null;
+    }
+    
+    public getCurrentExercise(): Exercise | null {
+        let currentExerciseData = this.getCurrentExerciseData();
+
+        if (currentExerciseData === null) {
+            return null;
+        }
+
+        return currentExerciseData.generatedExercise;
+    }
 }
 
 export default EditorPersistentState;

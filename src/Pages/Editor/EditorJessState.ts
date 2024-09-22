@@ -1,43 +1,35 @@
-import {Exercise} from "../../types/Exercise";
+import { Exercise } from "../../types/Exercise";
 
 class EditorJessState {
-    private static instance: EditorJessState | null = null;
-
+    public currentExercise: Exercise | null;
     public editorCode: string;
     public editorLanguage: string;
-    public editorSelection: string; // if nothing is selected, just provide the line the keyboard caret is on
-    public currentExercise: Exercise;
-    public currentTestWindowContents: string[];
+    public editorSelection: string;
+    public executionLog: string[];
 
-    // placeholder so the code compiles; do with this what you will.
-    private constructor(editorCode: string, editorLanguage: string, editorSelection: string, currentExercise: Exercise, currentTestWindowContents: string[]) {
+    // Constructor to initialize properties
+    constructor(
+        editorCode: string = "",
+        editorLanguage: string = "python", // Default language
+        editorSelection: string = "",
+        currentExercise: Exercise | null = null,
+        executionLog: string[] = []
+    ) {
         this.editorCode = editorCode;
         this.editorLanguage = editorLanguage;
         this.editorSelection = editorSelection;
         this.currentExercise = currentExercise;
-        this.currentTestWindowContents = currentTestWindowContents;
-    }
-    public static getInstance() : EditorJessState{
-        if (EditorJessState.instance == null){
-            throw new Error("EditorJessState is not initialized");
-        }
-        return EditorJessState.instance;
-
+        this.executionLog = executionLog;
     }
 
-    public static initialize(editorCode : string, editorLanguage : string, editorSelection: string, currentExercise: Exercise, currentTestWindowContents: string[]){
-        if (EditorJessState.instance != null){
-            throw new Error("EditorJessState is already initialized.");
-        }
-        EditorJessState.instance = new EditorJessState(editorCode, editorLanguage, editorSelection, currentExercise, currentTestWindowContents);
-    }
-
-    public getCode(): string{
+    public getCode(): string {
         return this.editorCode;
     }
-    public setCode(newCode: string): void{
+
+    public setCode(newCode: string): void {
         this.editorCode = newCode;
     }
+
     public getLanguage(): string {
         return this.editorLanguage;
     }
@@ -57,15 +49,15 @@ class EditorJessState {
 
     // Test Window Content Getters and Setters
     public getTestWindowContents(): string[] {
-        return this.currentTestWindowContents;
+        return this.executionLog;
     }
 
     public setTestWindowContents(newContents: string[]): void {
-        this.currentTestWindowContents = newContents;
+        this.executionLog = newContents;
     }
 
     // Exercise Getters and Setters
-    public getCurrentExercise(): Exercise {
+    public getCurrentExercise(): Exercise | null {
         return this.currentExercise;
     }
 
@@ -73,4 +65,5 @@ class EditorJessState {
         this.currentExercise = newExercise;
     }
 }
-export default EditorJessState
+
+export default EditorJessState;

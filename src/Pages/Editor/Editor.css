@@ -16,7 +16,8 @@ body, html {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    background-color: #121212;
+    background-color: #000000;
+    padding: 10px;
 }
 
 /* Main container (Editor + Problem/Output) */
@@ -24,26 +25,26 @@ body, html {
     display: flex;
     flex-direction: row;
     height: 100%;
-    padding: 20px;
-    gap: 5px;
-    background-color: #121212;
+    gap: 2px;
 }
 
 /* Editor container */
 .editor-container {
-    background-color: #1e1e1e;
-    border-radius: 8px;
+    background-color: #121316;
+    border-radius: 35px;
     padding: 20px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     overflow-y: auto;
+    border: 3px solid #37383A;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Minimalistic scrollbar */
 .editor-container::-webkit-scrollbar,
 .problem-container::-webkit-scrollbar,
 .output-container::-webkit-scrollbar {
-    width: 6px; /* Reduced size */
+    width: 0px; /* Reduced size */
     background-color: transparent; /* Hidden by default */
 }
 
@@ -100,38 +101,11 @@ body, html {
     background-color: rgba(255, 105, 180, 0.4); /* Light pink on hover */
 }
 
-/* Resizable dividers */
-.resize-divider-vertical {
-    height: 5px;
-    background: linear-gradient(to right, #ff8103, #ff1c61, #e200a3, #9b04db); /* Pink/orange gradient */
-    cursor: row-resize;
-    margin: 0 10px;
-    border-radius: 4px;
-    box-shadow: 0px 0px 10px rgba(255, 105, 180, 0.4); /* Soft glow */
-    transition: box-shadow 1s ease-in-out;
-}
-
-.resize-divider-horizontal {
-    width: 5px;
-    background: linear-gradient(to bottom, #ff8103, #ff1c61, #e200a3, #9b04db); /* Pink/orange gradient */
-    cursor: col-resize;
-    margin: 0 10px;
-    border-radius: 4px;
-    box-shadow: 0px 0px 10px rgba(255, 105, 180, 0.4); /* Soft glow */
-    transition: box-shadow 1s ease-in-out;
-}
-
-.resize-divider:hover,
-.resize-divider-horizontal:hover {
-    box-shadow: 0px 0px 15px rgba(255, 105, 180, 0.6); /* Stronger glow on hover */
-}
-
-
 /* Problem and Output Container */
 .problem-and-output-container {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: 2px;
     height: 100%;
     flex-grow: 1;
     overflow: hidden;
@@ -141,13 +115,14 @@ body, html {
 }
 
 .problem-container {
-    background-color: #1e1e1e;  /* Dark background */
-    color: #d4d4d4;  /* Light text color to contrast with dark background */
-    padding: 16px;
-    border-radius: 8px;
+    background-color: #121316;  /* Dark background */
+    color: #BABBBB;  /* Light text color to contrast with dark background */
+    padding: 25px;
+    border-radius: 35px;
     overflow-y: auto;
     max-height: 100%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: 3px solid #37383A;
+    min-width: 10px;
 }
 
 .problem-container h1,
@@ -204,14 +179,14 @@ body, html {
 
 /* Output / Terminal container */
 .output-container {
-    background-color: #282c34;
+    background-color: #121316;
     padding: 15px;
     color: white;
     display: flex;
     flex-direction: column;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
     overflow-y: auto;
-    border-radius: 8px;
+    border: 3px solid #37383A;
+    border-radius: 35px;
     max-height: 100%;
     flex-grow: 1; /* Make it grow to fill available space */
     min-height: 0; /* Prevent content from affecting the height */
@@ -225,7 +200,7 @@ body, html {
     white-space: pre-wrap; /* Preserves whitespace for command formatting */
     font-family: 'Courier New', Courier, monospace; /* Monospace font for terminal */
     flex-direction: column-reverse; /* Reverse the column direction */
-    
+    display: inline-flex;
 }
 
 /* Terminal input section */
@@ -258,28 +233,15 @@ body, html {
 
 /* Resizable dividers */
 .resize-divider-vertical {
-    height: 5px;
-    background: linear-gradient(to right, #ff8103, #ff1c61, #e200a3, #9b04db); /* Pink/orange gradient */
+    height: 6px;
     cursor: ns-resize;
-    margin: 0 10px;
-    border-radius: 4px;
-    box-shadow: 0px 0px 10px rgba(255, 105, 180, 0.4); /* Soft glow */
-    transition: box-shadow .3s ease-in-out;
+    margin: 0 0;
 }
 
 .resize-divider-horizontal {
-    width: 5px;
-    background: linear-gradient(to bottom, #ff8103, #ff1c61, #e200a3, #9b04db); /* Pink/orange gradient */
+    width: 6px;
     cursor: ew-resize;
-    margin: 0 10px;
-    border-radius: 4px;
-    box-shadow: 0px 0px 10px rgba(255, 105, 180, 0.4); /* Soft glow */
-    transition: box-shadow .3s ease-in-out;
-}
-
-.resize-divider:hover,
-.resize-divider-horizontal:hover {
-    box-shadow: 0px 0px 15px rgba(255, 105, 180, 0.6); /* Stronger glow on hover */
+    margin: 0 0;
 }
 
 /* Terminal minimalistic scrollbar */

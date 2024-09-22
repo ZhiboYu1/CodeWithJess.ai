@@ -13,7 +13,7 @@ const EditorWrapper = () => {
                     id: '1',
                     title: 'Hello, world!',
                     description: 'Write a function that returns the string "Hello, world!"',
-                    example: [
+                    examples: [
                         {
                             input: '',
                             output: 'Hello, world!',
@@ -42,7 +42,7 @@ const EditorWrapper = () => {
     }
 
     const appState = EditorPersistentState.getInstance();
-    return <Editor appState={appState} />;
+    return <Editor editorPersistentState={appState} />;
 };
 
 export default EditorWrapper;

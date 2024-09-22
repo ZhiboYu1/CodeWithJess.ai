@@ -13,7 +13,7 @@ interface Exercise {
     id: string;  // identifier is shared with plan id
     title: string;
     description: string;
-    example: ExerciseExample[];
+    examples: ExerciseExample[];
     constraints: string;
     initialCode: string;
     testCases: TestCase[];
