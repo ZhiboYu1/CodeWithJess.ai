@@ -1,12 +1,13 @@
-## Inspiration**
+## CodeWithJess.ai is an AI-powerd personalized Khan Academy that revolutionizes CS learning. Jess crafts tailored learning paths, adapts to your progress, and provides interactive guidance every step of the way.
+## Inspiration
 The idea of CodeWithJess stems from a deeply personal experience that resonates with many. It all began when we witnessed a close friend struggle with their coding journey, constantly feeling overwhelmed and left behind in their classes. Their frustration ignited a spark within us—a realization that the traditional methods of teaching programming were failing countless aspiring coders. **With Jess, everything changes.** Jess builds a **scientifically structured lesson plan** just for you. You’re no longer bound to a rigid, fixed syllabus but one that is adapted to your personal skill.
 Whether you’ve never written a line of code or you’re looking to expand your skills, Jess creates a journey that’s intuitive. Inspired by the interactive and accessible approach of platforms like Khan Academy; we envisioned a solution that could promote coding education for everyone. Our mission became to create a learning experience that can adapt to each individual's pace and style, making the daunting world of programming more approachable and engaging. With CodeWithJess, we're not just teaching code; we're nurturing curiosity, building confidence, and opening doors to the endless possibilities that coding skills can unlock.
 
-## What it does**
+## What it does
 CodeWithJess is an innovative, AI-powered coding education platform designed to revolutionize how people learn programming. At its core is Jess, an interactive AI mentor that provides a personalized learning experience **tailored to each user's needs and goals.** Upon starting, users share their learning objectives and background, allowing Jess to craft a customized learning course from scratch. This adaptive AI continuously adjusts the curriculum based on the user's progress, offering interactive coding practice that evolves with the learner's skills.
 Jess goes beyond simple instruction by answering specific coding questions, explaining related topics, and providing context to deepen understanding. Jess constantly **reassesses your current abilities** and **redesigns your lesson plan** on the fly. It’s dynamic. It’s flexible. It’s everything a traditional curriculum **isn’t**. Jess is **revolutionizing** the way coding is taught—**saving time, boosting learning, and making progress feel effortless.** Whether you're a beginner or looking to expand your coding repertoire; CodeWithJess is more than just a learning platform; it's a companion on your coding journey, ready to support, challenge, and inspire you every step of the way.
 
-## Challenges we ran into**
+## Challenges we ran into
 In developing CodeWithJess for this hackathon, our team encountered several significant challenges that tested our problem-solving skills and pushed us to innovate. However, through persistence and creativity, we overcame these obstacles.
 
 To address the execution backend issues, particularly maintaining Python state persistence, we implemented a Python pipeline with environment serialization. This innovative approach allowed us to keep the environment in a pseudo-live state, enabling remote access and manipulation.
@@ -30,7 +31,7 @@ Finally, we paid special attention to the **onboarding process**, making it feel
 
 Our platform boasts a **beautiful, intuitive UI/UX design** that integrates seamlessly with our AI-driven features, creating a clean and enjoyable learning experience. Additionally, the **editor** communicates with our **execution backend**, functioning as a live REPL. It runs the user’s code and returns real-time feedback, ensuring that learning to code is interactive and engaging without directly involving the language model in code execution.
 
-## What we learned**
+## What we learned
 - How to implement and create AI prompt engineering
 - How to create effective data structures in TypeScript
 - How to collaborate, brainstorm, and design decoupled software architecture. Not only does this optimize team task distribution, progress, and time management to successfully get most of the work done, but also improve code maintainability and scalability.
