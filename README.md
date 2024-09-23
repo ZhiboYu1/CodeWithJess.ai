@@ -43,6 +43,9 @@ Our platform boasts a **beautiful, intuitive UI/UX design** that integrates seam
 - Future developments may include collaborative community features: quizzes, forums, or peer interaction. Increasing a strong community bond and learning environment.
 - Helps support concurrency to handle large users’ parallel requests.
 
+## Required NPM Modules
+
+### `npm i @anthropic-ai/sdk monaco-editor marked axios`
 
 ## Available Scripts
 
