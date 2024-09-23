@@ -8,7 +8,7 @@ async function queryOpenAIO1(prompts: Array<string>): Promise<string> {
         messages.push({'role': 'user', 'content': prompt});
         try {
             const response = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
-                model: "openai/o1-preview",
+                model: "anthropic/claude-3.5-sonnet",
                 messages: messages,
             }, {
                 headers: {
