@@ -13,6 +13,7 @@ interface ProblemOutputProps {
     handleInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     handleKeyPress: (e: React.KeyboardEvent<HTMLInputElement>) => void;
     handleMouseDownVertical: (e: React.MouseEvent) => void;
+    problem_output_width: number;
 }
 
 const ProblemOutput: React.FC<ProblemOutputProps> = ({
@@ -25,10 +26,11 @@ const ProblemOutput: React.FC<ProblemOutputProps> = ({
                                                          userInput,
                                                          handleInputChange,
                                                          handleKeyPress,
-                                                         handleMouseDownVertical
+                                                         handleMouseDownVertical,
+                                                         problem_output_width,
                                                      }) => {
     return (
-        <div className="problem-and-output-container">
+        <div className="problem-and-output-container" style={{ width: `${problem_output_width}%` }}>
             <div
                 className="problem-container"
                 ref={problemRef}
@@ -40,7 +42,7 @@ const ProblemOutput: React.FC<ProblemOutputProps> = ({
                 className="resize-divider-vertical"
                 onMouseDown={handleMouseDownVertical}
             ></div>
-            <div className="output-container" ref={outputRef}>
+            <div className="output-container" ref={outputRef} style={{ height: `${1 - problemHeight}%` }}>
                 <div className="terminal-output" ref={terminalOutputRef}>
                     {output.map((line, index) => (
                         <p key={index}>{line}</p>

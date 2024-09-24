@@ -1,7 +1,9 @@
 .problem-main-container {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    flex: 1;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .problem-main-container h1 {
@@ -35,11 +37,12 @@
     color: #BABBBB;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     word-break: break-word;
     overflow-wrap: break-word;
     max-width: 100%;
     min-width: 0;
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .problem-container-body p:first-child {

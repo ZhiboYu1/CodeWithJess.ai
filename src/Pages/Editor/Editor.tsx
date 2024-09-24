@@ -22,11 +22,11 @@ const Editor: React.FC<EditorProps> = ({ editorPersistentState }) => {
 
     const {
         currentExercise, setCurrentExercise, code, setCode, output, setOutput,
-        userInput, setUserInput, highlightedText, setHighlightedText,
+        userInput, setUserInput, highlightedTextRef,
         isEditorAskJessOpen, setIsEditorAskJessOpen,
         sessionId, handleEditorChange, handleSubmitCode,
         handleSubmitButton, handleInputChange, handleKeyPress, handleSelectionChange,
-        openAskJess, finishLesson, executeSomething, getJessState, setEditorManager
+        openAskJess, finishLesson, executeSomething, getJessState, editorManagerRef
     } = useEditorLogic(editorPersistentState);
 
     const {
@@ -39,8 +39,9 @@ const Editor: React.FC<EditorProps> = ({ editorPersistentState }) => {
     useEffect(() => {
         if (editorContainerRef.current) {
             const newEditorManager = new MonacoEditorManager(editorContainerRef.current, 'python', code);
+            editorManagerRef.current = newEditorManager;
             newEditorManager.initEditor(handleEditorChange);
-            setEditorManager(newEditorManager);
+            console.log("Editor manager init ", newEditorManager)
             return () => {
                 newEditorManager.disposeEditor();
                 editorPersistentState.appStateUpdated();
@@ -122,6 +123,7 @@ const Editor: React.FC<EditorProps> = ({ editorPersistentState }) => {
                     handleInputChange={handleInputChange}
                     handleKeyPress={handleKeyPress}
                     handleMouseDownVertical={handleMouseDownVertical}
+                    problem_output_width={100-editorWidth}
                 />
             </div>
             <EditorAskJess

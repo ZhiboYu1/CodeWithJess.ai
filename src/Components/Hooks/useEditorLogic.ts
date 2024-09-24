@@ -1,22 +1,21 @@
-import { useState } from 'react';
-import axios from 'axios';
+import {useRef, useState} from 'react';
 import EditorJessState from "../Editor/EditorJessState";
 import EditorPersistentState from "../../Pages/Editor/EditorPersistentState";
 import MonacoEditorManager from "../../Pages/Editor/MonacoEditorManager";
 import {executeCode, createSession} from "../Utils/pythonAPI";
 export const useEditorLogic = (editorPersistentState: EditorPersistentState) => {
     const [currentExercise, setCurrentExercise] = useState(editorPersistentState.getCurrentExercise());
-    const [code, setCode] = useState(editorPersistentState.getCurrentExercise()?.initialCode || '');
+    const [code, setCode] = useState(editorPersistentState.getCurrentExercise()?.initialCode.trimStart() || '');
     const [output, setOutput] = useState<string[]>([]);
     const [userInput, setUserInput] = useState("");
-    const [highlightedText, setHighlightedText] = useState<string>('');
+    const highlightedTextRef = useRef<string>('');
     const [isEditorAskJessOpen, setIsEditorAskJessOpen] = useState(false);
     const [sessionId, setSessionId] = useState<string | null>(null);
     const [lastApiCall, setLastApiCall] = useState<number | null>(null);
-    const [editorManager, setEditorManager] = useState<MonacoEditorManager | null>(null);
+    const editorManagerRef = useRef<MonacoEditorManager | null>(null);
 
 
-    const jessState = new EditorJessState(code, 'python', highlightedText, currentExercise, output);
+    const jessState = new EditorJessState(code, 'python', highlightedTextRef, currentExercise, output);
 
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -120,15 +119,17 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
 
     const handleSelectionChange = () => {
         const selection = window.getSelection();
-        const selectionEditor = editorManager?.getSelected();
+        const selectionEditor = editorManagerRef?.current?.getSelected();
+        console.log(editorManagerRef.current);
+        console.log("Editor text: ", selectionEditor);
         if (selectionEditor && selectionEditor != '') {
-            setHighlightedText(selectionEditor);
-            console.log(selectionEditor)
+            highlightedTextRef.current = (selectionEditor);
+            console.log(selectionEditor);
         } else if (selection && selection.toString()) {
-            console.log(selection.toString())
-            setHighlightedText(selection.toString());
+            console.log(selection.toString());
+            highlightedTextRef.current = (selection.toString());
         }
-        console.log(highlightedText);
+        console.log(highlightedTextRef.current);
     };
 
     const openAskJess = () => {
@@ -147,10 +148,10 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
 
     return {
         currentExercise, setCurrentExercise, code, setCode, output, setOutput,
-        userInput, setUserInput, highlightedText, setHighlightedText,
+        userInput, setUserInput, highlightedTextRef,
         isEditorAskJessOpen, setIsEditorAskJessOpen,
         sessionId, handleEditorChange, handleSubmitCode,
         handleSubmitButton, handleInputChange, handleKeyPress, handleSelectionChange,
-        openAskJess, finishLesson, executeSomething, getJessState, setEditorManager
+        openAskJess, finishLesson, executeSomething, getJessState, editorManagerRef
     };
 };

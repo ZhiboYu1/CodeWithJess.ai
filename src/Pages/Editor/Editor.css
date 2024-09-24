@@ -34,7 +34,7 @@ body, html {
     background-color: #121316;
     border-radius: 35px;
     padding: 20px;
-    overflow: hidden;
+    overflow-x: hidden;
     overflow-y: auto;
     border: 3px solid #37383A;
     display: flex;
@@ -109,7 +109,7 @@ body, html {
     gap: 2px;
     height: 100%;
     flex-grow: 1;
-    overflow: hidden;
+    overflow: auto;
     text-autospace: none;
     text-overflow: ellipsis;
     white-space: normal;
@@ -123,15 +123,15 @@ body, html {
     padding: 25px;
     border-radius: 35px;
     overflow-y: auto; /* Allows vertical scrolling */
-    overflow-x: hidden; /* Prevents horizontal overflow */
     max-height: 100%;
     border: 3px solid #37383A;
     min-width: 10px;
     display: flex;
     flex-direction: column;
     flex-grow: 1; /* Allows the container to expand */
-    min-width: 0; /* Allows shrinking within flex parent */
     max-width: 100%; /* Prevents exceeding its parent */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
 }
 
 .problem-container h1,

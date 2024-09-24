@@ -4,14 +4,14 @@ class EditorJessState {
     public currentExercise: Exercise | null;
     public editorCode: string;
     public editorLanguage: string;
-    public editorSelection: string;
+    public editorSelection:  React.MutableRefObject<string>;
     public executionLog: string[];
 
     // Constructor to initialize properties
     constructor(
         editorCode: string = "",
         editorLanguage: string = "python", // Default language
-        editorSelection: string = "",
+        editorSelection:  React.MutableRefObject<string>,
         currentExercise: Exercise | null = null,
         executionLog: string[] = []
     ) {
@@ -40,11 +40,11 @@ class EditorJessState {
 
     // Selection Getters and Setters
     public getSelection(): string {
-        return this.editorSelection;
+        return this.editorSelection.current;
     }
 
     public setSelection(newSelection: string): void {
-        this.editorSelection = newSelection;
+        this.editorSelection.current = newSelection;
     }
 
     // Test Window Content Getters and Setters

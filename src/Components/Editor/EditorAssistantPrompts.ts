@@ -114,7 +114,7 @@ ${stringifyQuestionForJess(jessState.currentExercise!)}
 ${jessState.editorCode}
 </code>
 <selection>
-${jessState.editorSelection}
+${jessState.editorSelection.current}
 </selection>
 <run_session>
 ${jessState.executionLog.length > 0 ? jessState.executionLog.join("\n") : "No session runnning."}
