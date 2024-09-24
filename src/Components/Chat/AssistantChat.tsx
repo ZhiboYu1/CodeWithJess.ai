@@ -98,7 +98,6 @@ const AssistantChat: React.FC<AssistantChatProps> = ({
 
     let objectsToDisplay = ongoingAssistantResponse ? [...chatHistory, createMockAnthropicMessageObjectAssistant(ongoingAssistantResponse)] : chatHistory;
     let displayChatItems: DisplayChatItem[] = objectsToDisplay.map(anthropicObjectToDisplayChatItem).filter((item): item is DisplayChatItem => item !== null);
-
     return (
         <div
             className="assistant-chat"

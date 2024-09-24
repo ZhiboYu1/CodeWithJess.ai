@@ -104,8 +104,13 @@ class EditorPersistentState {
     }
 
     public getNextExerciseData(): ExercisePlanAssociatedData | null {
-        const currentExerciseId = this.lessonPlan[this.indexOfCurrentExercise].id;
-        return this.exercisePlanAssociatedData.get(currentExerciseId + 1) || null;
+        if (this.indexOfCurrentExercise + 1 >= this.lessonPlan.length) {
+            console.warn("No more exercises left.");
+            return null; // Or handle it differently if you want to loop back or end
+        }
+
+        const nextExerciseId = this.lessonPlan[this.indexOfCurrentExercise + 1].id;
+        return this.exercisePlanAssociatedData.get(nextExerciseId) || null;
     }
     
     public getCurrentExercise(): Exercise | null {
@@ -118,15 +123,18 @@ class EditorPersistentState {
         return currentExerciseData.generatedExercise;
     }
 
+    // Transition to the next exercise
     public toNextExercise(): Exercise | null {
-        let nextExerciseData = this.getNextExerciseData();
+        const nextExerciseData = this.getNextExerciseData();
 
-        if (nextExerciseData === null) {
-            return null;
+        if (!nextExerciseData) {
+            return null; // No more exercises available
         }
-        this.indexOfCurrentExercise += 1;
 
-        return nextExerciseData.generatedExercise;
+        this.indexOfCurrentExercise += 1; // Move to the next exercise
+        this.appStateUpdated(); // Persist the state after changing the current exercise
+
+        return nextExerciseData.generatedExercise; // Return the next exercise
     }
 }
 

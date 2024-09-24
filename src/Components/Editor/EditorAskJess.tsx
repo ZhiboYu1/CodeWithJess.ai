@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from 'react';
-import { useNavigate } from "react-router-dom";
 import './EditorAskJess.css';
 import { AnthropicObject } from "../../types/AnthropicObjects";
 import {
@@ -7,24 +6,21 @@ import {
     EDITOR_INITIAL_MESSAGES,
     EDITOR_SYSTEM_PROMPT, transformPromptForJess
 } from "./EditorAssistantPrompts";
-import { onboardingInitializeAppState } from "../../Routines/Onboarding/onboardingInitializeAppState";
-import AssistantChat from "../../Components/Chat/AssistantChat";
-import { ChatMessageItemResources, ChatMessageItemSizeParams } from "../../Components/Chat/ChatMessageItem";
-import { ChatMessageListSizeParams } from "../../Components/Chat/ChatMessageList";
-import { ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams } from "../../Components/Chat/ChatMessageInputBox";
+import AssistantChat from "../Chat/AssistantChat";
+import { ChatMessageItemResources, ChatMessageItemSizeParams } from "../Chat/ChatMessageItem";
+import { ChatMessageListSizeParams } from "../Chat/ChatMessageList";
+import { ChatMessageInputBoxResources, ChatMessageInputBoxSizeParams } from "../Chat/ChatMessageInputBox";
 import EditorJessState from "./EditorJessState";
-import {OnboardingAssistantToolInput} from "../Onboarding/OnboardingAssistantPrompts";
 
 interface ChatProps {
     show: boolean;
     chatHeight: string;
-    location: number;
     getJessState: () => EditorJessState;
+    location: number;
     toNextExercise: () => void;
 }
 
-const EditorAskJess: React.FC<ChatProps> = ({ show, chatHeight, location, getJessState, toNextExercise }) => {
-    const navigate = useNavigate();
+const EditorAskJess: React.FC<ChatProps> = ({ show, chatHeight, getJessState, location, toNextExercise }) => {
     const mainRef = useRef<HTMLDivElement>(null);
 
     const chatMessageItemResources: ChatMessageItemResources = {
