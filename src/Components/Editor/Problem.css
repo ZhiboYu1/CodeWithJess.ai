@@ -1,3 +1,9 @@
+.problem-main-container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
 .problem-main-container h1 {
     margin-top: 0;
     margin-bottom: 25px;
@@ -5,6 +11,8 @@
     font-size: 35px;
     line-height: 41px;
     color: #ffffff;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .problem-container-heading {
@@ -16,6 +24,8 @@
     line-height: 31px;
     color: #ffffff;
     margin: 0;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .problem-container-body {
@@ -25,6 +35,11 @@
     color: #BABBBB;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    min-width: 0;
 }
 
 .problem-container-body p:first-child {
@@ -50,6 +65,7 @@
     flex-direction: column;
     gap: 9px;
     font-size: 22px;
+    max-width: 100%;
 }
 
 .problem-example-io-text {
@@ -58,13 +74,20 @@
 
 .problem-example-io-value {
     font-weight: 400;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .problem-example-io-value-code {
     font-family: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
 }
 
 .problem-example-group {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    overflow-wrap: break-word;
 }

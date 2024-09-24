@@ -26,6 +26,7 @@ body, html {
     flex-direction: row;
     height: 100%;
     gap: 2px;
+    min-width: 0; /* Allow shrink within its parent */
 }
 
 /* Editor container */
@@ -112,17 +113,25 @@ body, html {
     text-autospace: none;
     text-overflow: ellipsis;
     white-space: normal;
+    min-width: 0; /* Allows containers to shrink properly */
+
 }
 
 .problem-container {
-    background-color: #121316;  /* Dark background */
-    color: #BABBBB;  /* Light text color to contrast with dark background */
+    background-color: #121316;
+    color: #BABBBB;
     padding: 25px;
     border-radius: 35px;
-    overflow-y: auto;
+    overflow-y: auto; /* Allows vertical scrolling */
+    overflow-x: hidden; /* Prevents horizontal overflow */
     max-height: 100%;
     border: 3px solid #37383A;
     min-width: 10px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allows the container to expand */
+    min-width: 0; /* Allows shrinking within flex parent */
+    max-width: 100%; /* Prevents exceeding its parent */
 }
 
 .problem-container h1,
@@ -261,4 +270,30 @@ body, html {
 .problem-container, .output-container, .editor-container {
     box-sizing: border-box;
     word-wrap: break-word; /* Ensure long words wrap */
+}
+
+.problem-container p,
+.problem-container pre,
+.problem-container blockquote {
+    word-wrap: break-word; /* Ensures long words or URLs wrap */
+    white-space: normal; /* Allows text to wrap within the container */
+}
+
+/* Make sure the images are responsive */
+.problem-container img {
+    max-width: 100%;
+    height: auto;
+    display: block; /* Ensures the image scales correctly within the container */
+}
+
+/* For bullet points and lists */
+.problem-container ul,
+.problem-container ol {
+    padding-left: 20px;
+    word-wrap: break-word;
+}
+
+.problem-container li {
+    margin-bottom: 8px;
+    word-wrap: break-word;
 }

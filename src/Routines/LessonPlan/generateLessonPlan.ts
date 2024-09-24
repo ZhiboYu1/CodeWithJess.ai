@@ -62,7 +62,7 @@ Remember that:
 2. You should come up with exercises where users write a program containing a function that correctly processes given inputs to produce expected outputs.
 3. You should not include any exercises guiding the user to setup the language or packages, as the students have access to a ready-made environment already.
 
-${process.env["REACT_APP_DEBUG_MODE "] === 'true' ? `
+${process.env.REACT_APP_DEBUG_MODE === 'true' ? `
 <system_information>
 You are currently in **DEBUG MODE** where performance is being tested. As part of the performance test, you should only generate 5 exercises in total and no more.
 </system_information>` : ''}

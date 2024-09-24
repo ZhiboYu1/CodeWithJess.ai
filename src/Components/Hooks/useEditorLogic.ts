@@ -1,11 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import EditorJessState from "../Editor/EditorJessState";
 import EditorPersistentState from "../../Pages/Editor/EditorPersistentState";
 import MonacoEditorManager from "../../Pages/Editor/MonacoEditorManager";
-import {Simulate} from "react-dom/test-utils";
-import select = Simulate.select;
-
+import {executeCode, createSession} from "../Utils/pythonAPI";
 export const useEditorLogic = (editorPersistentState: EditorPersistentState) => {
     const [currentExercise, setCurrentExercise] = useState(editorPersistentState.getCurrentExercise());
     const [code, setCode] = useState(editorPersistentState.getCurrentExercise()?.initialCode || '');
@@ -22,8 +20,8 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
 
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-    const executeSomething = async (executeCode: string) => {
-        if (executeCode === '') {
+    const executeSomething = async (codeToRun: string) => {
+        if (codeToRun === '') {
             return '';
         }
         // Sends some code to the execute api with the current session.
@@ -32,17 +30,12 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
         // Check if we need to wait before making the next API call
         if (lastApiCall && now - lastApiCall < 100) {
             const remainingTime = 100 - (now - lastApiCall);
-            console.log(`Waiting for ${remainingTime}ms to rate limit API calls.`);
             await delay(remainingTime);
         }
 
         let thisSession;
         if (!sessionId) {
-            const sessionResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/create_session`, {headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            });
-            thisSession = sessionResponse.data.session_id;
+            thisSession = await createSession();
             setSessionId(thisSession);
 
             await delay(200); // Simulate any required delay for initializing session
@@ -51,21 +44,12 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
         }
 
         // Send user's code for execution in the session
-        console.log(executeCode, thisSession);
-        const executeResponse = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/execute`, {
-                code: executeCode,
-                session_id: thisSession,
-                headers: {
-                    'Cache-Control': 'no-cache'
-                }
-            }
-        );
-        const result = executeResponse.data.output;
+        console.log(codeToRun, thisSession);
+        const result = await executeCode(codeToRun, thisSession);
         // Display the execution output
         if (result !== "<NULL_OUT>") {
-            setOutput(prev => [executeResponse.data.output, ...prev]);
+            setOutput(prev => [result, ...prev]);
         }
-        console.log(executeResponse.data.output);
 
         // Update the last API call timestamp
         setLastApiCall(Date.now());

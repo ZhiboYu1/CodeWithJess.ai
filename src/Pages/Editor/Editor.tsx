@@ -8,12 +8,18 @@ import ProblemOutput from '../../Components/Editor/ProblemOutput';
 import EditorAskJess from '../../Components/Editor/EditorAskJess';
 import { useEditorLogic } from '../../Components/Hooks/useEditorLogic';
 import { useResizeLogic } from '../../Components/Hooks/useResizeLogic';
+import {deleteSession} from "../../Components/Utils/pythonAPI";
 
 interface EditorProps {
     editorPersistentState: EditorPersistentState;
 }
 
 const Editor: React.FC<EditorProps> = ({ editorPersistentState }) => {
+    const editorContainerRef = useRef<HTMLDivElement>(null);
+    const askJessRef = useRef<HTMLButtonElement>(null);
+    const outputRef = useRef<HTMLDivElement>(null);
+    const terminalOutputRef = useRef<HTMLDivElement>(null);
+
     const {
         currentExercise, setCurrentExercise, code, setCode, output, setOutput,
         userInput, setUserInput, highlightedText, setHighlightedText,
@@ -24,9 +30,8 @@ const Editor: React.FC<EditorProps> = ({ editorPersistentState }) => {
     } = useEditorLogic(editorPersistentState);
 
     const {
-        editorWidth, problemHeight, editorContainerRef, editorOuterRef,
-        problemRef, outputRef, terminalOutputRef, askJessRef,
-        handleMouseDownHorizontal, handleMouseDownVertical
+        editorWidth, problemHeight, editorOuterRef,
+        problemRef, handleMouseDownHorizontal, handleMouseDownVertical
     } = useResizeLogic();
 
     const [jessLocation, setJessLocation] = useState<number>(0);
@@ -44,10 +49,13 @@ const Editor: React.FC<EditorProps> = ({ editorPersistentState }) => {
     }, []);
 
     useEffect(() => {
+        if (sessionId) { // Only run if we don't have a current session.
+            return;
+        }
         executeSomething(code);
         return () => {
             if (sessionId) {
-                // Delete session logic here
+                deleteSession(sessionId).then();
             }
         }
     }, []);
