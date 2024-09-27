@@ -10,7 +10,7 @@ async function queryOpenAIO1(prompts: Array<string>): Promise<string> {
             const response = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
                 model: process.env.REACT_APP_DEBUG_MODE === 'true'
                     ? "anthropic/claude-3.5-sonnet"  // Debug model
-                    : "openai/o1-mini",           // Regular model,
+                    : "openai/o1-preview",           // Regular model,
                 messages: messages,
             }, {
                 headers: {
