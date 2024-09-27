@@ -47,7 +47,7 @@ export default class MonacoEditorManager {
     }
 
     // Method to set new code content
-    setCode(code: string) {
+    public setCode(code: string): void {
         this.editorInstance?.setValue(code);
     }
 

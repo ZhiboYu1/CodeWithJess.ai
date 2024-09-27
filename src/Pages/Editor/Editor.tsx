@@ -8,7 +8,7 @@ import ProblemOutput from '../../Components/Editor/ProblemOutput';
 import EditorAskJess from '../../Components/Editor/EditorAskJess';
 import { useEditorLogic } from '../../Components/Hooks/useEditorLogic';
 import { useResizeLogic } from '../../Components/Hooks/useResizeLogic';
-import {deleteSession} from "../../Components/Utils/pythonAPI";
+import {deleteSession, executeCode} from "../../Components/Utils/pythonAPI";
 
 interface EditorProps {
     editorPersistentState: EditorPersistentState;
@@ -26,7 +26,7 @@ const Editor: React.FC<EditorProps> = ({ editorPersistentState }) => {
         isEditorAskJessOpen, setIsEditorAskJessOpen,
         sessionId, handleEditorChange, handleSubmitCode,
         handleSubmitButton, handleInputChange, handleKeyPress, handleSelectionChange,
-        openAskJess, finishLesson, executeSomething, getJessState, editorManagerRef
+        openAskJess, finishLesson, executeSomething, getJessState, editorManagerRef, executionStart
     } = useEditorLogic(editorPersistentState);
 
     const {
@@ -42,6 +42,7 @@ const Editor: React.FC<EditorProps> = ({ editorPersistentState }) => {
             editorManagerRef.current = newEditorManager;
             newEditorManager.initEditor(handleEditorChange);
             console.log("Editor manager init ", newEditorManager)
+            editorPersistentState.userCode = code;
             return () => {
                 newEditorManager.disposeEditor();
                 editorPersistentState.appStateUpdated();
@@ -50,16 +51,44 @@ const Editor: React.FC<EditorProps> = ({ editorPersistentState }) => {
     }, []);
 
     useEffect(() => {
-        if (sessionId) { // Only run if we don't have a current session.
-            return;
-        }
-        executeSomething(code);
-        return () => {
-            if (sessionId) {
-                deleteSession(sessionId).then();
+        let thisSession: string;
+        const setUpBackend = async () => {
+            // Async request.
+            const response = await executionStart(code);
+
+            // Logic after async request.
+            if (response) {
+                thisSession = response;
+                return response;
             }
-        }
-    }, []);
+        };
+
+        setUpBackend().then();
+
+        const waitForSessionId = async () => {
+            // Wait up to 20 seconds for sessionId.
+            let timeout = 20000; // 20 seconds
+            const startTime = Date.now();
+
+            // Poll every 500ms to check for sessionId.
+            while (!thisSession && (Date.now() - startTime < timeout)) {
+                await new Promise((resolve) => setTimeout(resolve, 500));
+            }
+
+            // After waiting, call deleteSession if sessionId exists.
+            if (thisSession) {
+                deleteSession(thisSession).then();
+            } else {
+                console.log("Session ID was not set before cleanup.");
+            }
+        };
+
+        return () => {
+            // Call the function that waits for sessionId and handles deletion.
+            waitForSessionId().then(() => console.log("Cleaned up"));
+        };
+    }, []); // Empty dependency array to run only once on load.
+
 
     useEffect(() => { // Follows the movement of the button
         const updatePosition = () => {

@@ -1,11 +1,15 @@
 import { LessonPlan } from "../../types/ExercisePlan";
 import { Exercise } from "../../types/Exercise";
+import {generateExercise} from "../../Routines/LessonPlan/generateExercise";
 
-interface ExerciseConversation {
-    // TODO
+export interface ExerciseConversation {
+    // TODO: Define the structure of a conversation
+    id: string;
+    messages: Array<{ role: 'user' | 'assistant', content: string }>;
+    // Add other necessary fields
 }
 
-interface ExercisePlanAssociatedData {
+export interface ExercisePlanAssociatedData {
     generatedExercise: Exercise | null;
     isCompleted: boolean;
     lastSolutionFailedReason: string | null;
@@ -19,16 +23,16 @@ interface ExercisePlanAssociatedData {
 class EditorPersistentState {
     private static instance: EditorPersistentState | null = null;
 
-    public lessonPlan: LessonPlan;
-    public indexOfCurrentExercise: number;
-    public assistantMemory: string[];
-    public exercisePlanAssociatedData: Map<string, ExercisePlanAssociatedData>;
+    private _lessonPlan: LessonPlan;
+    private _indexOfCurrentExercise: number;
+    private _memory: string[];
+    private _exercisePlanAssociatedData: Map<string, ExercisePlanAssociatedData>;
 
-    private constructor(lessonPlan: LessonPlan, indexOfCurrentExercise: number, assistantMemory: string[], exercisePlanAssociatedData: Map<string, ExercisePlanAssociatedData>) {
-        this.lessonPlan = lessonPlan;
-        this.indexOfCurrentExercise = indexOfCurrentExercise;
-        this.assistantMemory = assistantMemory;
-        this.exercisePlanAssociatedData = exercisePlanAssociatedData;
+    private constructor(lessonPlan: LessonPlan, indexOfCurrentExercise: number, memory: string[], exercisePlanAssociatedData: Map<string, ExercisePlanAssociatedData>) {
+        this._lessonPlan = lessonPlan;
+        this._indexOfCurrentExercise = indexOfCurrentExercise;
+        this._memory = memory;
+        this._exercisePlanAssociatedData = exercisePlanAssociatedData;
     }
 
     public static initialize(lessonPlan: LessonPlan, indexOfCurrentExercise: number, assistantMemory: string[], exercisePlanAssociatedData: Map<string, ExercisePlanAssociatedData>) {
@@ -51,6 +55,39 @@ class EditorPersistentState {
         return EditorPersistentState.instance !== null;
     }
 
+    // Getters and setters for private properties
+    get lessonPlan(): LessonPlan {
+        return this._lessonPlan;
+    }
+
+    set lessonPlan(value: LessonPlan) {
+        this._lessonPlan = value;
+        this.appStateUpdated();
+    }
+
+    get indexOfCurrentExercise(): number {
+        return this._indexOfCurrentExercise;
+    }
+
+    set indexOfCurrentExercise(value: number) {
+        this._indexOfCurrentExercise = value;
+        this.appStateUpdated();
+    }
+
+    get memory(): string[] {
+        return this._memory;
+    }
+
+    set memory(value: string[]) {
+        this._memory = value;
+        this.appStateUpdated();
+    }
+
+    get exercisePlanAssociatedData(): Map<string, ExercisePlanAssociatedData> {
+        return this._exercisePlanAssociatedData;
+    }
+
+
     private lastPersistTime: number = 0;
 
     public appStateUpdated() {
@@ -63,33 +100,37 @@ class EditorPersistentState {
         }
     }
 
+    set userCode(code: string | null) {
+        const exerciseData = this.getCurrentExerciseData();
+        exerciseData!.userCode = code;
+        this.appStateUpdated();
+    }
+
+    get userCode(): string | null {
+        const exerciseData = this.getCurrentExerciseData();
+        return exerciseData!.userCode;
+    }
+
     private persistToDisk() {
-        // Get the current EditorPersistentState instance
-        const appState = EditorPersistentState.getInstance();
-        // Convert the current state to a JSON string
         const stateJson = JSON.stringify({
-            lessonPlan: appState.lessonPlan,
-            indexOfCurrentExercise: appState.indexOfCurrentExercise,
-            assistantMemory: appState.assistantMemory,
-            exercisePlanAssociatedData: Array.from(appState.exercisePlanAssociatedData.entries())
+            lessonPlan: this._lessonPlan,
+            indexOfCurrentExercise: this._indexOfCurrentExercise,
+            assistantMemory: this._memory,
+            exercisePlanAssociatedData: Array.from(this._exercisePlanAssociatedData.entries())
         });
 
-        // Save the JSON string to local storage
         localStorage.setItem('appState', stateJson);
     }
 
     public static loadFromDisk(): EditorPersistentState {
-        // Retrieve the JSON string from local storage
         const stateJson = localStorage.getItem('appState');
 
         if (stateJson === null) {
             throw new Error("No state found in local storage.");
         }
 
-        // Parse the JSON string into an object
         const stateObject = JSON.parse(stateJson);
 
-        // Create a new EditorPersistentState instance from the object
         return new EditorPersistentState(
             stateObject.lessonPlan,
             stateObject.indexOfCurrentExercise,
@@ -99,42 +140,53 @@ class EditorPersistentState {
     }
 
     public getCurrentExerciseData(): ExercisePlanAssociatedData | null {
-        const currentExerciseId = this.lessonPlan[this.indexOfCurrentExercise].id;
-        return this.exercisePlanAssociatedData.get(currentExerciseId) || null;
-    }
-
-    public getNextExerciseData(): ExercisePlanAssociatedData | null {
-        if (this.indexOfCurrentExercise + 1 >= this.lessonPlan.length) {
-            console.warn("No more exercises left.");
-            return null; // Or handle it differently if you want to loop back or end
-        }
-
-        const nextExerciseId = this.lessonPlan[this.indexOfCurrentExercise + 1].id;
-        return this.exercisePlanAssociatedData.get(nextExerciseId) || null;
-    }
-    
-    public getCurrentExercise(): Exercise | null {
-        let currentExerciseData = this.getCurrentExerciseData();
-
-        if (currentExerciseData === null) {
+        if (this._indexOfCurrentExercise >= this._lessonPlan.length) {
             return null;
         }
-
-        return currentExerciseData.generatedExercise;
+        const currentExerciseId = this._lessonPlan[this._indexOfCurrentExercise].id;
+        return this._exercisePlanAssociatedData.get(currentExerciseId) || null;
     }
 
-    // Transition to the next exercise
-    public toNextExercise(): Exercise | null {
-        const nextExerciseData = this.getNextExerciseData();
+    public getCurrentExercise(): Exercise | null {
+        const currentExerciseData = this.getCurrentExerciseData();
+        return currentExerciseData?.generatedExercise || null;
+    }
 
-        if (!nextExerciseData) {
-            return null; // No more exercises available
+    public async moveToNextExercise(): Promise<boolean> {
+        if (this._indexOfCurrentExercise < this._lessonPlan.length - 1) {
+            // Mark the current exercise as completed
+            const currentExerciseId = this._lessonPlan[this._indexOfCurrentExercise].id;
+            this.updateExercisePlanAssociatedData(currentExerciseId, { isCompleted: true });
+
+            // Move to the next exercise
+            this._indexOfCurrentExercise++;
+
+            // Initialize or reset the data for the new current exercise if it doesn't exist
+            const nextExerciseId = this._lessonPlan[this._indexOfCurrentExercise].id;
+            if (!this._exercisePlanAssociatedData.has(nextExerciseId)) {
+                const nextExercise = await generateExercise(this._memory, this._lessonPlan[this._indexOfCurrentExercise]);
+                this._exercisePlanAssociatedData.set(nextExerciseId, {
+                    generatedExercise: nextExercise,
+                    isCompleted: false,
+                    lastSolutionFailedReason: null,
+                    userCode: null,
+                    allUserConversations: [],
+                    currentCodeActiveConversation: null,
+                    currentQuestionActiveConversation: null,
+                    timeSpent: 0
+                });
+            }
+
+            this.appStateUpdated();
+            return true;
         }
+        return false;
+    }
 
-        this.indexOfCurrentExercise += 1; // Move to the next exercise
-        this.appStateUpdated(); // Persist the state after changing the current exercise
-
-        return nextExerciseData.generatedExercise; // Return the next exercise
+    public updateExercisePlanAssociatedData(exerciseId: string, data: Partial<ExercisePlanAssociatedData>) {
+        const currentData = this._exercisePlanAssociatedData.get(exerciseId) || {} as ExercisePlanAssociatedData;
+        this._exercisePlanAssociatedData.set(exerciseId, { ...currentData, ...data });
+        this.appStateUpdated();
     }
 }
 

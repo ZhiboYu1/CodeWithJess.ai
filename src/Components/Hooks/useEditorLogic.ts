@@ -5,7 +5,7 @@ import MonacoEditorManager from "../../Pages/Editor/MonacoEditorManager";
 import {executeCode, createSession} from "../Utils/pythonAPI";
 export const useEditorLogic = (editorPersistentState: EditorPersistentState) => {
     const [currentExercise, setCurrentExercise] = useState(editorPersistentState.getCurrentExercise());
-    const [code, setCode] = useState(editorPersistentState.getCurrentExercise()?.initialCode.trimStart() || '');
+    const [code, setCode] = useState(editorPersistentState.userCode?.trimStart() || editorPersistentState.getCurrentExercise()?.initialCode.trimStart() || '');
     const [output, setOutput] = useState<string[]>([]);
     const [userInput, setUserInput] = useState("");
     const highlightedTextRef = useRef<string>('');
@@ -19,11 +19,7 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
 
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-    const executeSomething = async (codeToRun: string) => {
-        if (codeToRun === '') {
-            return '';
-        }
-        // Sends some code to the execute api with the current session.
+    const getSession = async (): Promise<string> => {
         const now = Date.now();
 
         // Check if we need to wait before making the next API call
@@ -42,6 +38,16 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
             thisSession = sessionId;
         }
 
+        return thisSession;
+    }
+
+    const executeSomething = async (codeToRun: string) => {
+        if (codeToRun === '') {
+            return '';
+        }
+        // Sends some code to the execute api with the current session.
+
+        const thisSession = await getSession();
         // Send user's code for execution in the session
         console.log(codeToRun, thisSession);
         const result = await executeCode(codeToRun, thisSession);
@@ -53,6 +59,20 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
         // Update the last API call timestamp
         setLastApiCall(Date.now());
         return result;
+    };
+
+
+    const executionStart = async (codeToRun: string) => {
+        // Sends some code to the execute api with the current session.
+        const thisSession = await getSession();
+
+        // Send user's code for execution in the session
+        console.log(codeToRun, thisSession);
+        await executeCode(codeToRun, thisSession);
+
+        // Update the last API call timestamp
+        setLastApiCall(Date.now());
+        return thisSession;
     };
 
     const handleEditorChange = (value: string | undefined) => {
@@ -79,7 +99,7 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
                 console.log("trying test case ", testCase)
                 const output = await executeSomething(testCase.replInput);
                 console.log(output);
-                const result = await executeSomething(`print(${output}==${testCase.replOutput})`);
+                const result = await executeSomething(`print("${output}"=="${testCase.replOutput}")`);
                 console.log(result);
                 setOutput(prev => [(result==="True")? "Test passed": "Test failed" , ...prev]);
             } catch (error) {
@@ -120,26 +140,31 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
     const handleSelectionChange = () => {
         const selection = window.getSelection();
         const selectionEditor = editorManagerRef?.current?.getSelected();
-        console.log(editorManagerRef.current);
-        console.log("Editor text: ", selectionEditor);
-        if (selectionEditor && selectionEditor != '') {
+        if (selectionEditor && selectionEditor !== '') {
             highlightedTextRef.current = (selectionEditor);
-            console.log(selectionEditor);
         } else if (selection && selection.toString()) {
-            console.log(selection.toString());
             highlightedTextRef.current = (selection.toString());
         }
-        console.log(highlightedTextRef.current);
     };
 
     const openAskJess = () => {
         setIsEditorAskJessOpen(!isEditorAskJessOpen);
     };
 
-    const finishLesson = () => {
-        setCurrentExercise(editorPersistentState.toNextExercise());
-        setCode(currentExercise?.initialCode || '');
-        setOutput([]);
+    const finishLesson = async () => {
+        const lessonChanged = await editorPersistentState.moveToNextExercise();
+        if (lessonChanged) {
+            const nextExercise = editorPersistentState.getCurrentExercise()
+            setCurrentExercise(nextExercise);
+            if (editorManagerRef.current) {
+                editorManagerRef.current.setCode(nextExercise?.initialCode || '');
+            }
+            setCode(nextExercise?.initialCode || '');
+            setOutput([]);
+        } else {
+            console.log("No more exercises to complete!")
+        }
+
     };
 
     const getJessState = () => {
@@ -152,6 +177,6 @@ export const useEditorLogic = (editorPersistentState: EditorPersistentState) => 
         isEditorAskJessOpen, setIsEditorAskJessOpen,
         sessionId, handleEditorChange, handleSubmitCode,
         handleSubmitButton, handleInputChange, handleKeyPress, handleSelectionChange,
-        openAskJess, finishLesson, executeSomething, getJessState, editorManagerRef
+        openAskJess, finishLesson, executeSomething, getJessState, editorManagerRef, executionStart
     };
 };

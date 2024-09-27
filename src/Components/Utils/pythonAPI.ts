@@ -16,8 +16,9 @@ export const executeCode = async (code: string, sessionId: string) => {
     return response.data.output;
 };
 
-export const deleteSession = (sessionId: string) => {
-    return axios.post(`${process.env.REACT_APP_BACKEND_URL}/create_session/${sessionId}`, {
+export const deleteSession = async (sessionId: string) => {
+    return await axios.post(`${process.env.REACT_APP_BACKEND_URL}/delete_session/${sessionId}`, {
         headers: { 'Cache-Control': 'no-cache' }
     });
 };
+

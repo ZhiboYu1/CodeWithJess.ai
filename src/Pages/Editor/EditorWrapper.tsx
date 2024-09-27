@@ -7,6 +7,9 @@ const EditorWrapper = () => {
         EditorPersistentState.initialize([{
             id: '1',
             description: 'Hello, world!'
+        }, {
+            id: '2',
+            description: 'Goodbye, world!'
         }], 0, ['Name is Jess'], new Map([
             ['1', {
                 generatedExercise: {
@@ -45,9 +48,9 @@ const EditorWrapper = () => {
                     description: 'Write a function that returns the string "Goodbye, world!"',
                     examples: [
                         {
-                            input: '',
-                            output: 'Hello, world!',
-                            explanation: 'The function should return the string "Hello, world!"'
+                            input: 'goodbye_world()',
+                            output: 'Goodbye, world!',
+                            explanation: 'The function should return the string "Goodbye, world!"'
                         }
                     ],
                     constraints: 'No constraints.',
